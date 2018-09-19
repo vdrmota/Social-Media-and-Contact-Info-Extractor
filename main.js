@@ -50,23 +50,24 @@ Apify.main(async () => {
     
     console.log('opening request queue');
     const requestQueue = await Apify.openRequestQueue();
+    if(!input.startUrl){throw new Error('Missinq "startUrl" attribute in INPUT!');}
     
-    await requestQueue.addRequest(new Apify.Request({ 
-        url: input.startUrl,
-        uniqueKey: input.startUrl,
-        userData: {label: 'START', depth: 1, referrer: null}
+	await requestQueue.addRequest(new Apify.Request({ 
+    	url: input.startUrl,
+    	uniqueKey: input.startUrl,
+    	userData: {label: 'START', depth: 1, referrer: null}
     }));
 	
-    const gotoFunction = async ({ page, request }) => {
-        await page.setRequestInterception(true)
-        page.on('request', intercepted => {
-            const type = intercepted.resourceType();
-            if(type === 'image' || type === 'stylesheet'){intercepted.abort();}
-            else{intercepted.continue();}
-        })
-        console.log('going to: ' + request.url);
-        await Apify.utils.puppeteer.hideWebDriver(page);
-        return await page.goto(request.url, {timeout: 200000});
+	const gotoFunction = async ({ page, request }) => {
+    	await page.setRequestInterception(true)
+    	page.on('request', intercepted => {
+    	    const type = intercepted.resourceType();
+    		if(type === 'image' || type === 'stylesheet'){intercepted.abort();}
+    		else{intercepted.continue();}
+    	})
+    	console.log('going to: ' + request.url);
+    	await Apify.utils.puppeteer.hideWebDriver(page);
+    	return await page.goto(request.url, {timeout: 200000});
     };
     
     const pageFunction = async (userData) => {
@@ -200,14 +201,14 @@ Apify.main(async () => {
         handlePageFunction,
         handleFailedRequestFunction: async ({ request }) => {
             console.log(`Request ${request.url} failed 4 times`);
-        },
-        maxRequestRetries: 1,
-        maxConcurrency: input.parallels || 1,
-        pageOpsTimeoutMillis: 999999,
-        launchPuppeteerOptions: input.puppeteerOptions || {},
-        //gotoFunction
+		},
+		maxRequestRetries: 1,
+		maxConcurrency: input.parallels || 1,
+		pageOpsTimeoutMillis: 999999,
+		launchPuppeteerOptions: input.puppeteerOptions || {},
+		gotoFunction
     });
 
-	  console.log('running the crawler')
+	console.log('running the crawler')
     await crawler.run();
 });
