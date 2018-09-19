@@ -52,7 +52,7 @@ Apify.main(async () => {
     const requestQueue = await Apify.openRequestQueue();
     if(!input.startUrl){throw new Error('Missinq "startUrl" attribute in INPUT!');}
     
-	await requestQueue.addRequest(new Apify.Request({ 
+    await requestQueue.addRequest(new Apify.Request({ 
     	url: input.startUrl,
     	uniqueKey: input.startUrl,
     	userData: {label: 'START', depth: 1, referrer: null}
