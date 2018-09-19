@@ -54,7 +54,6 @@ Apify.main(async () => {
     
     await requestQueue.addRequest(new Apify.Request({ 
     	url: input.startUrl,
-    	uniqueKey: input.startUrl,
     	userData: {label: 'START', depth: 1, referrer: null}
     }));
 	
@@ -139,7 +138,6 @@ Apify.main(async () => {
             if(isSameDomain && isAllowed){
                 await requestQueue.addRequest(new Apify.Request({
                 	url: url,
-                	uniqueKey: url + '',
                 	userData: {
                 	    label: 'SUBPAGE', 
                 	    depth: request.userData.depth + 1,
