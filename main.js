@@ -50,12 +50,12 @@ Apify.main(async () => {
     
     console.log('opening request queue');
     const requestQueue = await Apify.openRequestQueue();
-    if(!input.startUrl){throw new Error('Missinq "startUrl" attribute in INPUT!');}
-    
-    await requestQueue.addRequest(new Apify.Request({ 
-    	url: input.startUrl,
-    	userData: {label: 'START', depth: 1, referrer: null}
-    }));
+	
+    if(!input.startUrls){throw new Error('Missinq "startUrls" attribute in INPUT!');}
+    const requestList = new Apify.RequestList({
+	sources: input.startUrls,
+	persistStateKey: 'startUrls'
+    });
 	
     const gotoFunction = async ({ page, request }) => {
     	await page.setRequestInterception(true)
@@ -195,6 +195,7 @@ Apify.main(async () => {
     };
 
     const crawler = new Apify.PuppeteerCrawler({
+	requestList,
         requestQueue,
         handlePageFunction,
         handleFailedRequestFunction: async ({ request }) => {
