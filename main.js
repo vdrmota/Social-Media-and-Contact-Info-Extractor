@@ -52,8 +52,13 @@ Apify.main(async () => {
     const requestQueue = await Apify.openRequestQueue();
 	
     if(!input.startUrls){throw new Error('Missinq "startUrls" attribute in INPUT!');}
+    const startUrls = input.startUrls.map(url => {
+    	const req = url.url ? url : {url: url};
+	req.userData = {label: 'START', depth: 1, referrer: null};
+	return req;
+    });
     const requestList = new Apify.RequestList({
-	sources: input.startUrls,
+	sources: startUrls,
 	persistStateKey: 'startUrls'
     });
 	
