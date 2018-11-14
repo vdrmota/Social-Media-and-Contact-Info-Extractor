@@ -1,4 +1,4 @@
-# act-social-extractor
+# actor-social-extractor
 Apify actor for extracting e-mails, phone numbers and social network links from a website.
 
 This actor crawls a specified website and extracts all e-mails, phone numbers and social network links.
