@@ -1,24 +1,11 @@
 const Apify = require('apify');
 const request = require('request-promise');
 
-async function saveScreenshot(name, page){
-    try{
-        const screenshotBuffer = await page.screenshot();
-        await Apify.setValue(name + '.png', screenshotBuffer, { contentType: 'image/png' });
-        const html = await page.evaluate(() => document.body.innerHTML);
-        await Apify.setValue(name + '.html', html, { contentType: 'text/html' });
-    }
-    catch(e){console.log('unable to save screenshot: ' + name);}
-}
-
-async function getText(element){
-    try{
-        const prop = await element.getProperty('textContent');
-        return (await prop.jsonValue()).trim();
-    }
-    catch(e){return null;}
-}
-
+/**
+ * Gets attribute as text from a ElementHandle.
+ * @param {ElementHandle} element - The element to get attribute from.
+ * @param {string} attr - Name of the attribute to get.
+ */
 async function getAttribute(element, attr){
     try{
         const prop = await element.getProperty(attr);
@@ -27,6 +14,10 @@ async function getAttribute(element, attr){
     catch(e){return null;}
 }
 
+/**
+ * Gets the domain name from a URL.
+ * @param {url} element - The URL to get domain name from.
+ */
 function getDomain(url){
     const host1 = url.split('://')[1];
     if(!host1){return null;}
@@ -34,6 +25,10 @@ function getDomain(url){
     return host2[host2.length - 2] + '.' + host2[host2.length - 1];
 }
 
+/**
+ * Waits until all elements on the page are loaded.
+ * It needs to be used in page.evaluate.
+ */
 async function waitForAllElements(){
     let count = 0;
     const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -45,23 +40,33 @@ async function waitForAllElements(){
     }
 }
 
+/** Main function */
 Apify.main(async () => {
-    const input = await Apify.getValue('INPUT');
+const input = await Apify.getValue('INPUT');
     
+    // Create RequestQueue
     console.log('opening request queue');
     const requestQueue = await Apify.openRequestQueue();
 	
+	// Check input
     if(!input.startUrls){throw new Error('Missinq "startUrls" attribute in INPUT!');}
+    
+    // Check and fix startUrls
     const startUrls = input.startUrls.map(url => {
     	const req = url.url ? url : {url: url};
-	req.userData = {label: 'START', depth: 1, referrer: null};
-	return req;
+    	req.userData = {label: 'START', depth: 1, referrer: null};
+    	return req;
     });
+    
+    // Create RequestList
     const requestList = new Apify.RequestList({
-	sources: startUrls,
-	persistStateKey: 'startUrls'
+    	sources: startUrls,
+    	persistStateKey: 'startUrls'
     });
+    await requestList.initialize();
 	
+	/** Function for loading new page.
+	  * Disables all unnecessary requests and hides Puppeteer. */
     const gotoFunction = async ({ page, request }) => {
     	await page.setRequestInterception(true)
     	page.on('request', intercepted => {
@@ -74,28 +79,35 @@ Apify.main(async () => {
     	return await page.goto(request.url, {timeout: 200000});
     };
     
+    /** 
+     * Main function for extracting social infor from a page.
+	 * It needs to be used in page.evaluate. 
+	 * @param {Object} userData - Current request.userData object.
+	 */
     const pageFunction = async (userData) => {
         try{
-            var domain = getDomain(window.location.href);
+            // current page domain
+            const domain = getDomain(window.location.href);
             
-            var TEL_REGEX = /(tel|phone|telephone)(\s*):(\s*)([\+\-\d\s]+)/gi;
-            var EMAIL_REGEX = /[a-zA-Z0-9._-]+@(?!(1\.5x)|(2x))([-a-zA-Z0-9]+\.)+([a-zA-Z]{2,15})/gi;
-            var LINKEDIN_URL_REGEX = /http(s)?\:\/\/[a-zA-Z]+\.linkedin\.com\/in\/[a-zA-Z0-9\-_%]+/g;
-            var INSTAGRAM_URL_REGEX = /(?:(^|[^0-9a-z]))(((http|https):\/\/)?((www\.)?(?:instagram.com|instagr.am)\/([A-Za-z0-9_.]{2,30})))/ig;
-            var TWITTER_HANDLE_REGEX = /(?:(?:http|https):\/\/)?(?:www.)?(?:twitter.com)\/(?!(oauth|account|tos|privacy|signup|home|hashtag|search|login|widgets|i|settings|start|share|intent|oct)([\'\"\?\.\/]|$))([A-Za-z0-9_]{1,15})/igm;
+            // regular expressions for extraction
+            const TEL_REGEX = /(tel|phone|telephone)(\s*):(\s*)(\+?)\d([\+\-\d\s]+)/gi;
+            const EMAIL_REGEX = /[a-zA-Z0-9._-]+@(?!(1\.5x)|(2x))([-a-zA-Z0-9]+\.)+([a-zA-Z]{2,15})/gi;
+            const LINKEDIN_URL_REGEX = /http(s)?\:\/\/[a-zA-Z]+\.linkedin\.com\/in\/[a-zA-Z0-9\-_%]+/g;
+            const INSTAGRAM_URL_REGEX = /(?:(^|[^0-9a-z]))(((http|https):\/\/)?((www\.)?(?:instagram.com|instagr.am)\/([A-Za-z0-9_.]{2,30})))/ig;
+            const TWITTER_HANDLE_REGEX = /(?:(?:http|https):\/\/)?(?:www.)?(?:twitter.com)\/(?!(oauth|account|tos|privacy|signup|home|hashtag|search|login|widgets|i|settings|start|share|intent|oct)([\'\"\?\.\/]|$))([A-Za-z0-9_]{1,15})/igm;
             
-            var html = $('body').html();
-            //var referrerUrl = (context.request.type === 'StartUrl') ? 'N/A' : context.request.referrer.url;
+            // current html
+            const html = $('body').html();
             
             // instagram urls
-            var matches;
-            var instagramUrls = [];
+            let matches;
+            const instagramUrls = [];
             while((matches = INSTAGRAM_URL_REGEX.exec(html)) !== null){
                 instagramUrls.push(matches[2].replace('http://', 'https://'));
             }
             
-            // add https:// to urls which doens't have protocol. If http:// then replace to https://
-            var twitterUrls = _.uniq(html.match(TWITTER_HANDLE_REGEX));
+            // add https:// to urls which don't have protocol. If http:// then replace to https://
+            const twitterUrls = _.uniq(html.match(TWITTER_HANDLE_REGEX));
             _.each(twitterUrls, function (element, index, list){
                 if (!element.match(/(http|https):\/\//i))
                     element = 'https://' + element;
@@ -105,17 +117,19 @@ Apify.main(async () => {
                 twitterUrls[index] = element;
             });
             
-            var result = {
+            const result = {
                 url: window.location.href,
                 domain: domain,
                 depth: userData.depth,
-                //label: context.request.label,
                 referrerUrl: userData.referrer,
                 emails: _.uniq(_.invoke(html.match(EMAIL_REGEX), 'toLowerCase')).filter(function(item) {
                     if (item.startsWith("'") || item.startsWith("//")){return false;}
                     return ! /\.(png|jpg|jpeg|gif)/i.test(item);
                 }),
-                phones: _.uniq(html.match(TEL_REGEX)),
+                phones: _.uniq(_.uniq(html.match(TEL_REGEX)).map(s => {
+                    const sa = s.split(':');
+                    return sa[sa.length - 1].trim();
+                })),
                 linkedInUrls: _.uniq(html.match(LINKEDIN_URL_REGEX)),
                 instagramUrls: _.uniq(_.invoke(instagramUrls, 'toLowerCase')),
                 twitterUrls: _.uniq(_.invoke(twitterUrls, 'toLowerCase'))
@@ -131,6 +145,15 @@ Apify.main(async () => {
         }
     };
     
+    /**
+     * Adds links from a page to the RequestQueue.
+     * @param {Page} page - Puppeteer Page object containing the link elements.
+     * @param {RequestQueue} requestQueue - RequestQueue to add the requests to.
+     * @param {Request} request - Current page Request.
+     * @param {string} input - Main actor INPUT.
+     * @param {string} selector - A selector representing the links.
+     * @param {string} attr - Name of the element's attribute containing the link.
+     */
     const enqueueElements = async ({page, requestQueue, request, input, selector, attr}) => {
         for(const elem of await page.$$(selector)){
             const url = await getAttribute(elem, attr);
@@ -153,22 +176,31 @@ Apify.main(async () => {
         }
     }
     
+    /**
+     * Main crawler function.
+     * Handles processing of each Puppeteer page request.
+     */
     const handlePageFunction = async ({ page, request }) => {
         console.log('page open: ' + request.userData.label + ' - ' + request.url);
             
+        // Log messages from browser console
         page.on('console', msg => {
             for(let i = 0; i < msg.args.length; ++i){
                 console.log(`${i}: ${msg.args[i]}`);
             }
         });
         
+        // Wait for body tag to load
         await page.waitForSelector('body', {timeout: 60000});
         
+        // Inject libraries to the page
         await Apify.utils.puppeteer.injectJQuery(page);
         await Apify.utils.puppeteer.injectUnderscore(page);
         
+        // Wait for all elements to load
         await page.evaluate(waitForAllElements);
         
+        // Add getDomain function to page context
         await page.evaluate(() => {
             window.getDomain = function(url){
                 const host1 = url.split('://')[1];
@@ -177,6 +209,7 @@ Apify.main(async () => {
             };
         });
         
+        // Enqueue all links on the page
         if(!input.maxDepth || input.maxDepth > request.userData.depth){
             await enqueueElements({
                 page, requestQueue, request, input,
@@ -195,24 +228,24 @@ Apify.main(async () => {
             });
         }
         
+        // Extract social info from the page
         const result = await page.evaluate(pageFunction, request.userData);
         if(result){await Apify.pushData(result);}
     };
 
+    // Create the crawler
     const crawler = new Apify.PuppeteerCrawler({
-	requestList,
+	    requestList,
         requestQueue,
         handlePageFunction,
         handleFailedRequestFunction: async ({ request }) => {
             console.log(`Request ${request.url} failed 4 times`);
-	},
-	maxRequestRetries: 1,
-	maxConcurrency: input.parallels || 1,
-	pageOpsTimeoutMillis: 999999,
-	launchPuppeteerOptions: input.puppeteerOptions || {},
-	gotoFunction
+    	},
+    	launchPuppeteerOptions: input.proxyConfig || {},
+    	gotoFunction
     });
 
+    // Start the crawler
     console.log('running the crawler')
     await crawler.run();
 });
