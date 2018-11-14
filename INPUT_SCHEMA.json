@@ -1,0 +1,46 @@
+{
+    "title": "Social extractor input",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "startUrls": {
+            "title": "Start URLs",
+            "type": "array",
+            "description": "URLs to start with.",
+            "prefill": [{ "url": "https://www.apify.com" }],
+            "editor": "requestListSources"
+        },
+        "maxDepth": {
+            "title": "Maximum crawling depth",
+            "type": "integer",
+            "description": "How deep will the crawler follow links from the current page."
+        },
+        "sameDomain": {
+            "title": "Only same domain",
+            "type": "boolean",
+            "description": "The crawler will only extract data from pages of the same domain.",
+            "default": true
+        },
+        "skipDomains": {
+            "title": "Domains to skip",
+            "type": "array",
+            "editor": "json",
+            "description": "The crawler will skip pages of domains from this list.",
+            "default": []
+        },
+        "liveView": {
+            "title": "Enable LiveView",
+            "type": "boolean",
+            "description": "The crawler will have LiveView enabled.",
+            "default": false
+        },
+        "proxyConfig": {
+            "title": "Proxy configuration",
+            "type": "object",
+            "description": "Optionally use Apify Proxy.",
+            "default": {},
+            "editor": "proxy"
+        }
+    },
+    "required": ["startUrls"]
+}
