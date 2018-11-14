@@ -44,4 +44,5 @@ Input is a JSON object with the following properties:
         ...
     ]
 }
-```  
+```    
+* `liveView` sets if Apify live view will be enabled.
