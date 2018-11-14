@@ -233,15 +233,18 @@ const input = await Apify.getValue('INPUT');
         if(result){await Apify.pushData(result);}
     };
 
+    const launchPuppeteerOptions = input.proxyConfig || {};
+    if(input.liveView){launchPuppeteerOptions.liveView = true;}
+	
     // Create the crawler
     const crawler = new Apify.PuppeteerCrawler({
-	    requestList,
+	requestList,
         requestQueue,
         handlePageFunction,
         handleFailedRequestFunction: async ({ request }) => {
             console.log(`Request ${request.url} failed 4 times`);
     	},
-    	launchPuppeteerOptions: input.proxyConfig || {},
+    	launchPuppeteerOptions,
     	gotoFunction
     });
 
