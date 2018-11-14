@@ -9,16 +9,39 @@ Input is a JSON object with the following properties:
 
 ```javascript
 { 
-    "startUrl": START_URL,
+    "startUrls": START_URL_ARRAY,
     "maxDepth": MAX_CRAWLING_DEPTH,
     "sameDomain": ONLY_FROM_SAME_DOMAIN,
     "skipDomains": DOMAINS_TO_SKIP,
-    "puppeteerOptions": LAUNCH_PUPPETEER_OPTIONS
+    "proxyConfig": LAUNCH_PUPPETEER_OPTIONS
 }
 ```
 
-__startUrl__ is the only required attribute. This is the start page URL.  
-__maxDepth__ defines how deep the crawler will go until it stops, by default unlimited.  
-__sameDomain__ specifies if the crawler should only follow links from the same domain, default is __true__.  
-__skipDomains__ can contain an array of domains that will not be followed (in case __sameDomain__ is set to __false__).  
-__puppeteerOptions__ is a PuppeteerCrawler parameter [launchPuppeteerOptions](https://www.apify.com/docs/sdk/apify-runtime-js/latest#LaunchPuppeteerOptions).
+* `startUrls` is the only required attribute. This an array of start URLs.  It should look like this:  
+```javascript
+"startUrls": [
+    "https://www.zillow.com/homes/for_sale/globalrelevanceex_sort/34.442026,-117.48642,33.723197,-119.354096_rect/8_zm/",
+    "https://www.zillow.com/homes/for_sale/globalrelevanceex_sort/35.05698,-111.838074,32.458791,-115.573426_rect/7_zm/",
+    "https://www.zillow.com/homes/for_sale/globalrelevanceex_sort/45.782848,-96.737366,43.560491,-100.472718_rect/7_zm/",
+    ...
+]
+```  
+* `maxDepth` defines how deep the crawler will go until it stops, by default unlimited.  
+* `sameDomain` specifies if the crawler should only follow links from the same domain, default is `true`.
+* `skipDomains` can contain an array of domains that will not be followed (in case `sameDomain` is set to `false`), e.g:
+```javascript
+"skipDomains": [
+    "google.com",
+    "amazon.com"
+]
+```  
+* `proxyConfig` define Apify proxy configuration, it should respect this format:  
+```javascript
+"proxyConfig": {
+    "useApifyProxy": true,
+    "apifyProxyGroups": [
+        "RESIDENTIAL",
+        ...
+    ]
+}
+```  
