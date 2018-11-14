@@ -10,6 +10,20 @@
             "prefill": [{ "url": "https://www.apify.com" }],
             "editor": "requestListSources"
         },
+        "skipDomains": {
+            "title": "Domains to skip",
+            "type": "array",
+            "editor": "json",
+            "description": "The crawler will skip pages of domains from this list.",
+            "default": []
+        },
+        "proxyConfig": {
+            "title": "Proxy configuration",
+            "type": "object",
+            "description": "Optionally use Apify Proxy.",
+            "default": {},
+            "editor": "proxy"
+        }
         "maxDepth": {
             "title": "Maximum crawling depth",
             "type": "integer",
@@ -21,26 +35,12 @@
             "description": "The crawler will only extract data from pages of the same domain.",
             "default": true
         },
-        "skipDomains": {
-            "title": "Domains to skip",
-            "type": "array",
-            "editor": "json",
-            "description": "The crawler will skip pages of domains from this list.",
-            "default": []
-        },
         "liveView": {
             "title": "Enable LiveView",
             "type": "boolean",
             "description": "The crawler will have LiveView enabled.",
             "default": false
         },
-        "proxyConfig": {
-            "title": "Proxy configuration",
-            "type": "object",
-            "description": "Optionally use Apify Proxy.",
-            "default": {},
-            "editor": "proxy"
-        }
     },
     "required": ["startUrls"]
 }
