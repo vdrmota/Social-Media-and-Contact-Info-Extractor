@@ -20,9 +20,9 @@ Input is a JSON object with the following properties:
 * `startUrls` is the only required attribute. This an array of start URLs.  It should look like this:  
 ```javascript
 "startUrls": [
-    "https://www.zillow.com/homes/for_sale/globalrelevanceex_sort/34.442026,-117.48642,33.723197,-119.354096_rect/8_zm/",
-    "https://www.zillow.com/homes/for_sale/globalrelevanceex_sort/35.05698,-111.838074,32.458791,-115.573426_rect/7_zm/",
-    "https://www.zillow.com/homes/for_sale/globalrelevanceex_sort/45.782848,-96.737366,43.560491,-100.472718_rect/7_zm/",
+    "https://www.google.com",
+    "https://www.amazon.com",
+    "https://www.apify.com",
     ...
 ]
 ```  
