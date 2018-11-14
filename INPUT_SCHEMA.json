@@ -23,7 +23,7 @@
             "description": "Optionally use Apify Proxy.",
             "default": {},
             "editor": "proxy"
-        }
+        },
         "maxDepth": {
             "title": "Maximum crawling depth",
             "type": "integer",
@@ -40,7 +40,7 @@
             "type": "boolean",
             "description": "The crawler will have LiveView enabled.",
             "default": false
-        },
+        }
     },
     "required": ["startUrls"]
 }
