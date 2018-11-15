@@ -125,11 +125,11 @@ const input = await Apify.getValue('INPUT');
                 domain: domain,
                 depth: userData.depth,
                 referrerUrl: userData.referrer,
-                emails: _.uniq(_.invoke(html.match(EMAIL_REGEX), 'toLowerCase')).filter(function(item) {
+                emails: _.uniq(_.invoke(html.match(EMAIL_REGEX), 'toLowerCase').filter(function(item) {
                     if (item.startsWith("'") || item.startsWith("//")){return false;}
                     return ! /\.(png|jpg|jpeg|gif)/i.test(item);
-                }),
-                phones: _.uniq(_.uniq(html.match(TEL_REGEX)).map(s => {
+                })),
+                phones: _.uniq(html.match(TEL_REGEX).map(s => {
                     const sa = s.split(':');
                     return sa[sa.length - 1].trim();
                 })),
