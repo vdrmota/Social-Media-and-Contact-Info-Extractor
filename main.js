@@ -48,25 +48,23 @@ const input = await Apify.getValue('INPUT');
     console.log('opening request queue');
     const requestQueue = await Apify.openRequestQueue();
 	
-	// Check input
-    if(!input.startUrls){throw new Error('Missinq "startUrls" attribute in INPUT!');}
-    
-    // Check and fix startUrls
-    const startUrls = input.startUrls.map(url => {
-    	const req = url.url ? url : {url: url};
-    	req.userData = {label: 'START', depth: 1, referrer: null};
-    	return req;
-    });
-    
+    // Check if attribute is an Array
+    if(!Array.isArray(input.startUrls)){
+        throw new Error('INPUT.startUrls must be an array!');
+    }
+    // Convert any inconsistencies to correct format
+    for(let i = 0; i < input.startUrls.length; i++){
+        let request = input.startUrls[i];
+        if(typeof request === 'string'){request = {url: request};}
+	request.userData = {label: 'START', depth: 1, referrer: null};
+        input.startUrls[i] = request;
+    }
     // Create RequestList
-    const requestList = new Apify.RequestList({
-    	sources: startUrls,
-    	persistStateKey: 'startUrls'
-    });
+    const requestList = new Apify.RequestList({sources: input.startUrls});
     await requestList.initialize();
 	
-	/** Function for loading new page.
-	  * Disables all unnecessary requests and hides Puppeteer. */
+    /** Function for loading new page.
+     * Disables all unnecessary requests and hides Puppeteer. */
     const gotoFunction = async ({ page, request }) => {
     	await page.setRequestInterception(true)
     	page.on('request', intercepted => {
@@ -81,9 +79,9 @@ const input = await Apify.getValue('INPUT');
     
     /** 
      * Main function for extracting social infor from a page.
-	 * It needs to be used in page.evaluate. 
-	 * @param {Object} userData - Current request.userData object.
-	 */
+     * It needs to be used in page.evaluate. 
+     * @param {Object} userData - Current request.userData object.
+     */
     const pageFunction = async (userData) => {
         try{
             // current page domain
