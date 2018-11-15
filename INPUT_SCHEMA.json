@@ -24,12 +24,6 @@
             "default": {},
             "editor": "proxy"
         },
-        "waitForAjax": {
-            "title": "Wait for asynchronous elements",
-            "type": "boolean",
-            "description": "The crawler will wait until all elements are loaded (e.g. through AJAX).",
-            "default": true
-        },
         "maxDepth": {
             "title": "Maximum crawling depth",
             "type": "integer",
@@ -39,6 +33,12 @@
             "title": "Maximum requests per crawl",
             "type": "integer",
             "description": "How many pages can the crawler visit before ending."
+        },
+        "waitForAjax": {
+            "title": "Wait for asynchronous elements",
+            "type": "boolean",
+            "description": "The crawler will wait until all elements are loaded (e.g. through AJAX).",
+            "default": true
         },
         "sameDomain": {
             "title": "Only same domain",
