@@ -56,7 +56,9 @@ const input = await Apify.getValue('INPUT');
     for(let i = 0; i < input.startUrls.length; i++){
         let request = input.startUrls[i];
         if(typeof request === 'string'){request = {url: request};}
-	request.userData = {label: 'START', depth: 1, referrer: null};
+	if(request.url.length < 1){continue;}
+        request.userData = {label: 'START', depth: 1, referrer: null};
+	request.uniqueKey = request.url,
         input.startUrls[i] = request;
     }
     // Create RequestList
