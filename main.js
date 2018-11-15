@@ -201,7 +201,9 @@ const input = await Apify.getValue('INPUT');
         await Apify.utils.puppeteer.injectUnderscore(page);
         
         // Wait for all elements to load
-        await page.evaluate(waitForAllElements);
+	if(input.waitForAjax){
+            await page.evaluate(waitForAllElements);
+	}
         
         // Add getDomain function to page context
         await page.evaluate(() => {
