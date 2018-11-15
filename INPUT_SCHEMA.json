@@ -29,6 +29,11 @@
             "type": "integer",
             "description": "How deep will the crawler follow links from the current page."
         },
+        "maxRequests": {
+            "title": "Maximum requests per crawl",
+            "type": "integer",
+            "description": "How many pages can the crawler visit before ending."
+        },
         "sameDomain": {
             "title": "Only same domain",
             "type": "boolean",
