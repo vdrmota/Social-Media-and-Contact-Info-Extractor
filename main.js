@@ -240,7 +240,7 @@ const input = await Apify.getValue('INPUT');
     if(input.liveView){launchPuppeteerOptions.liveView = true;}
 	
     // Create the crawler
-    const crawler = new Apify.PuppeteerCrawler({
+    const crawlerOptions = {
 	requestList,
         requestQueue,
         handlePageFunction,
@@ -249,7 +249,9 @@ const input = await Apify.getValue('INPUT');
     	},
     	launchPuppeteerOptions,
     	gotoFunction
-    });
+    };
+    if(input.maxRequests){crawlerOptions.maxRequestsPerCrawl = input.maxRequests;}
+    const crawler = new Apify.PuppeteerCrawler(crawlerOptions);
 
     // Start the crawler
     console.log('running the crawler')
