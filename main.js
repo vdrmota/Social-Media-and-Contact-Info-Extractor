@@ -57,6 +57,7 @@ const input = await Apify.getValue('INPUT');
         let request = input.startUrls[i];
         if(typeof request === 'string'){request = {url: request};}
 	if(request.url.length < 1){continue;}
+	if(request.indexOf('http') < 0){request.url = 'https://' + request.url;}
         request.userData = {label: 'START', depth: 1, referrer: null};
 	request.uniqueKey = request.url,
         input.startUrls[i] = request;
