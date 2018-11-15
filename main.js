@@ -33,7 +33,7 @@ async function waitForAllElements(){
     let count = 0;
     const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
     for(let i = 0; i < 10; i++){
-        await timeout(1000);
+        await timeout(200);
         const cCount = document.getElementsByTagName('*').length;
         if(cCount != count){count = cCount;}
         else{return;}
