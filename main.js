@@ -121,6 +121,8 @@ const input = await Apify.getValue('INPUT');
                 twitterUrls[index] = element;
             });
             
+            const tphones = html.match(TEL_REGEX);
+		
             const result = {
                 url: window.location.href,
                 domain: domain,
@@ -130,10 +132,10 @@ const input = await Apify.getValue('INPUT');
                     if (item.startsWith("'") || item.startsWith("//")){return false;}
                     return ! /\.(png|jpg|jpeg|gif)/i.test(item);
                 })),
-                phones: _.uniq(html.match(TEL_REGEX).map(s => {
+                phones: tphones ? _.uniq(tphones.map(s => {
                     const sa = s.split(':');
                     return sa[sa.length - 1].trim();
-                })),
+                })) : [],
                 linkedInUrls: _.uniq(html.match(LINKEDIN_URL_REGEX)),
                 instagramUrls: _.uniq(_.invoke(instagramUrls, 'toLowerCase')),
                 twitterUrls: _.uniq(_.invoke(twitterUrls, 'toLowerCase'))
