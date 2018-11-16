@@ -88,9 +88,10 @@ const input = await Apify.getValue('INPUT');
      * @param {Object} userData - Current request.userData object.
      */
     const pageFunction = async (userData) => {
-        try{
-            // current page domain
-            const domain = getDomain(window.location.href);
+        // current page domain
+        const domain = getDomain(window.location.href);
+        
+	try{
             
             // regular expressions for extraction
             const TEL_REGEX = /(tel|phone|telephone)(\s*):(\s*)(\+?)\d([\+\-\d\s]+)/gi;
