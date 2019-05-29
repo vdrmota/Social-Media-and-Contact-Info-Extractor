@@ -1,4 +1,4 @@
-{ 
+{
   "name": "act-social-extractor",
   "version": "1.0.0",
   "description": "Apify actor for extracting e-mails, phone numbers and social network links from a website.",
@@ -8,8 +8,11 @@
     "type": "git",
     "url": "https://github.com/cermak-petr/act-social-extractor"
   },
-  "dependencies": { 
-    "apify": "^0.5.9",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "apify": "^0.14.10",
     "request-promise": "^4.2.2"
   }
 }

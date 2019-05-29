@@ -1,5 +1,5 @@
 {
-    "title": "Social extractor input",
+    "title": "Social Media Handles and Contact Info Extractor",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
@@ -38,12 +38,6 @@
             "title": "Wait for asynchronous elements",
             "type": "boolean",
             "description": "The crawler will wait until all elements are loaded (e.g. through AJAX).",
-            "default": true
-        },
-        "sameDomain": {
-            "title": "Only same domain",
-            "type": "boolean",
-            "description": "The crawler will only extract data from pages of the same domain.",
             "default": true
         },
         "liveView": {
