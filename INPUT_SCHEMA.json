@@ -4,18 +4,11 @@
     "schemaVersion": 1,
     "properties": {
         "startUrls": {
-            "title": "Start URLs",
+            "title": "Base URLs",
             "type": "array",
-            "description": "URLs to start with.",
-            "prefill": [{ "url": "https://www.apify.com" }],
+            "description": "Entry-point URLs for the crawler.",
+            "prefill": [{ "url": "https://www.harvard.edu" }],
             "editor": "requestListSources"
-        },
-        "skipDomains": {
-            "title": "Domains to skip",
-            "type": "array",
-            "editor": "json",
-            "description": "The crawler will skip pages of domains from this list.",
-            "default": []
         },
         "proxyConfig": {
             "title": "Proxy configuration",
@@ -25,25 +18,25 @@
             "editor": "proxy"
         },
         "maxDepth": {
-            "title": "Maximum crawling depth",
+            "title": "Maximum link depth",
             "type": "integer",
-            "description": "How deep will the crawler follow links from the current page."
+            "description": "Upper bound on link depth for crawler to traverse."
         },
         "maxRequests": {
-            "title": "Maximum requests per crawl",
+            "title": "Maximum requests",
             "type": "integer",
-            "description": "How many pages can the crawler visit before ending."
+            "description": "Upper bound on number of pages the crawler will visit per run."
         },
         "waitForAjax": {
             "title": "Wait for asynchronous elements",
             "type": "boolean",
-            "description": "The crawler will wait until all elements are loaded (e.g. through AJAX).",
+            "description": "The crawler will wait until all page elements are loaded.",
             "default": true
         },
         "liveView": {
             "title": "Enable LiveView",
             "type": "boolean",
-            "description": "The crawler will have LiveView enabled.",
+            "description": "Screenshots of pages will be stored when run in cloud.",
             "default": false
         }
     },
