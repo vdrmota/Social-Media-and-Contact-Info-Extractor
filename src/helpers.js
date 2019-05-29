@@ -10,7 +10,7 @@ module.exports = {
         if(request.url.indexOf('http') < 0){
             request.url = ((request.url.indexOf('//') == 0) ? 'http:' : 'http://') + request.url;
         }
-            request.userData = {label: 'START', depth: 1, referrer: null};
+            request.userData = {label: 'ROOT', depth: 1, referrer: null};
             request.uniqueKey = request.url,
             urls[i] = request;
         }
@@ -77,7 +77,7 @@ module.exports = {
                 await requestQueue.addRequest(new Apify.Request({
                 	url: url,
                 	userData: {
-                	    label: 'SUBPAGE', 
+                	    label: 'BRANCH', 
                 	    depth: request.userData.depth + 1,
                 	    referrer: request.url
                 	}
