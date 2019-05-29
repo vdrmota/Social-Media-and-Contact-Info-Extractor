@@ -20,12 +20,14 @@
         "maxDepth": {
             "title": "Maximum link depth",
             "type": "integer",
-            "description": "Upper bound on link depth for crawler to traverse."
+            "description": "Upper bound on link depth for crawler to traverse.",
+            "prefill": 2
         },
         "maxRequests": {
             "title": "Maximum requests",
             "type": "integer",
-            "description": "Upper bound on number of pages the crawler will visit per run."
+            "description": "Upper bound on number of pages the crawler will visit per run.",
+            "prefill": 100
         },
         "waitForAjax": {
             "title": "Wait for asynchronous elements",
