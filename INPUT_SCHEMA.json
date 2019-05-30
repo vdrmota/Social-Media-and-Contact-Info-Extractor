@@ -44,7 +44,7 @@
         "considerChildFrames": {
             "title": "Crawl Frames",
             "type": "boolean",
-            "description": "The crawler will inspect code loaded in HTML frames.",
+            "description": "The crawler will inspect code loaded inside of HTML frames.",
             "default": true
         },
         "collectSublinks": {
