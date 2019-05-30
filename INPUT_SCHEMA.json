@@ -7,7 +7,7 @@
             "title": "Base URLs",
             "type": "array",
             "description": "Entry-point URLs for the crawler.",
-            "prefill": [{ "url": "https://www.harvard.edu" }],
+            "prefill": [{ "url": "http://www.apify.com" }],
             "editor": "requestListSources"
         },
         "proxyConfig": {
@@ -40,6 +40,24 @@
             "type": "boolean",
             "description": "Screenshots of pages will be stored when run in cloud.",
             "default": false
+        },
+        "considerChildFrames": {
+            "title": "Crawl Frames",
+            "type": "boolean",
+            "description": "The crawler will inspect code loaded in HTML frames.",
+            "default": true
+        },
+        "collectSublinks": {
+            "title": "Store Sublinks",
+            "type": "boolean",
+            "description": "The crawler will store any sublinks it finds.",
+            "default": false
+        },
+        "sameDomain": {
+            "title": "Stay within Domain",
+            "type": "boolean",
+            "description": "The crawler will only crawl links within the given domain.",
+            "default": true
         }
     },
     "required": ["startUrls"]

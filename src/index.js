@@ -65,12 +65,31 @@ async function main() {
                 attr: 'src'
             });
         }
-        
+
+        // Crawl HTML frames
+        var frameSocialHandles = {}
+        if (input.considerChildFrames)
+            frameSocialHandles = await helpers.crawlFrames(page);
+
         // Extract and save handles, emails, phone numbers
         var result = await page.evaluate(crawlerConfig.pageFunction, request.userData);
-        result.data = await Apify.utils.social.parseHandlesFromHtml(result.html);
-        result.sublinks = await Apify.utils.extractUrls({string: result.html})
+        let socialHandles = await Apify.utils.social.parseHandlesFromHtml(result.html);
+
+        // Merge frames with main
+        var mergedSocial = helpers.mergeSocial(frameSocialHandles, socialHandles)
+
+        await ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((el) => {
+           result[el] = mergedSocial[el]
+        })
+
+        // Extract all sublinks from webpage
+        if (input.collectSublinks)
+            result.sublinks = await Apify.utils.extractUrls({string: result.html})
+
+        // Clean up
         delete result.html
+
+        // Store results
         await Apify.pushData(result)
 
     }

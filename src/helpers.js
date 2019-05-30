@@ -1,4 +1,5 @@
 const Apify = require('apify');
+const _ = require('underscore');
 
 module.exports = {
     // Convert any inconsistencies to correct format
@@ -65,15 +66,18 @@ module.exports = {
      * @param {string} attr - Name of the element's attribute containing the link.
      */
     enqueueElements: async ({page, requestQueue, request, input, selector, attr}) => {
-        for(const elem of await page.$$(selector)){
+        for (const elem of await page.$$(selector)){
             const url = await module.exports.getAttribute(elem, attr);
             if(!url){continue;}
             const domain = module.exports.getDomain(url);
             if(!domain){continue;}
-            const sameDomain = !('sameDomain' in input) || input.sameDomain;
-            const isSameDomain = !sameDomain || module.exports.getDomain(request.url) === domain;
-            const isAllowed = !input.skipDomains || input.skipDomains.indexOf(domain) < 0;
-            if(isSameDomain && isAllowed){
+
+            // Check if same domain is required
+            var isSameDomain = true
+            if (input.sameDomain)
+                isSameDomain = module.exports.getDomain(request.url) === domain;
+
+            if(isSameDomain){
                 await requestQueue.addRequest(new Apify.Request({
                 	url: url,
                 	userData: {
@@ -84,7 +88,47 @@ module.exports = {
                 }));
             }
         }
-    }
+    },
 
+    crawlFrames: async (page) => {
+        let socialHandles = {}
+            for (let childFrame of page.mainFrame().childFrames()) {
+                const html = await childFrame.content();
+                let childSocialHandles = null;
+                let childParseData = {};
+                try {
+                    childSocialHandles = Apify.utils.social.parseHandlesFromHtml(html, childParseData);
+    
+                    // Extract phones from links separately, they are high-certainty
+                    const childLinkUrls = await childFrame.$$eval('a', (linkEls) => {
+                        return linkEls.map(link => link.href).filter(href => !!href);
+                    });
+    
+                    ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((field) => {
+                        socialHandles[field] = childSocialHandles[field];
+                    });
+                } catch (e) {
+                    console.log(e)
+                }
+            }
+    
+            ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((field) => {
+                socialHandles[field] = _.uniq(socialHandles[field]);
+            });
+
+            return new Promise((resolve, reject) => {
+                resolve(socialHandles)
+            })
+    },
+
+    mergeSocial: function (frames, main) {
+        var output = main
+
+        for (key in output) {
+            main[key] = _.uniq(main[key].concat(frames[key]))
+        }
+
+        return output
+    }
 }
 
