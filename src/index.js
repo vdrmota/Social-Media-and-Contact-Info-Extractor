@@ -69,7 +69,7 @@ async function main() {
         // Extract and save handles, emails, phone numbers
         var result = await page.evaluate(crawlerConfig.pageFunction, request.userData);
         result.data = await Apify.utils.social.parseHandlesFromHtml(result.html);
-        result.links = await Apify.utils.extractUrls({ string: result.html.toString()})
+        result.sublinks = await Apify.utils.extractUrls({string: result.html})
         delete result.html
         await Apify.pushData(result)
 
