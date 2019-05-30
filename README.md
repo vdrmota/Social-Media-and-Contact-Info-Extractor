@@ -1,5 +1,5 @@
 # Contact Information Scraper
-### Overview
+**Overview**
 This crawler lets you scrape contact information from entire domains. After you supply the root domain (eg www.apify.com), the crawler will retrieve any:
 
 - Phone numbers
@@ -11,7 +11,7 @@ This crawler lets you scrape contact information from entire domains. After you 
 
 that are featured on the website and all its pages. As such, this crawler is useful for mining contact information of organizations and online services.
 
-### Input Settings
+**Input Settings**
 
 The crawler lets you specify:
 
@@ -22,7 +22,7 @@ The crawler lets you specify:
 - The maximum number of pages it should crawl.
 - Whether it should store all sublinks.
 
-### Results
+**Results**
 
 The crawler stores the results in a dataset, which can be exported into JSON, HTML, XML, RSS, CSV or Excel. Here is an example JSON output:
 
