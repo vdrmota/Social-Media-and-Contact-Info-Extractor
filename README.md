@@ -1,5 +1,6 @@
 # Contact Information Scraper
 **Overview**
+
 This crawler lets you scrape contact information from entire domains. After you supply the root domain (eg www.apify.com), the crawler will retrieve any:
 
 - Phone numbers
