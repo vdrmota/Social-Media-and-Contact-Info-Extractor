@@ -29,12 +29,6 @@
             "description": "Upper bound on number of pages the crawler will visit per run.",
             "prefill": 100
         },
-        "waitForAjax": {
-            "title": "Wait for asynchronous elements",
-            "type": "boolean",
-            "description": "The crawler will wait until all page elements are loaded.",
-            "default": true
-        },
         "liveView": {
             "title": "Enable LiveView",
             "type": "boolean",
