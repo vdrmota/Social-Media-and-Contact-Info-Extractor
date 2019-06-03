@@ -1,8 +1,8 @@
 const Apify = require('apify');
 const _ = require('underscore');
+const extractDomain = require('extract-domain');
 
 module.exports = {
-    // Convert any inconsistencies to correct format
     cleanUrl: function(urls) {
         for (let i = 0; i < urls.length; i++) {
             let request = urls[i];
@@ -13,9 +13,6 @@ module.exports = {
             }
             if (request.url.length < 1) {
                 continue;
-            }
-            if (request.url.indexOf('http') < 0) {
-                request.url = ((request.url.indexOf('//') == 0) ? 'http:' : 'http://') + request.url;
             }
             request.userData = {
                 label: 'ROOT',
@@ -38,26 +35,7 @@ module.exports = {
     },
 
     getDomain: function(url) {
-        const host1 = url.split('://')[1];
-        if (!host1) {
-            return null;
-        }
-        const host2 = host1.split('/')[0].split('.');
-        return host2[host2.length - 2] + '.' + host2[host2.length - 1];
-    },
-
-    waitForAllElements: async function() {
-        let count = 0;
-        const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
-        for (let i = 0; i < 10; i++) {
-            await timeout(200);
-            const cCount = document.getElementsByTagName('*').length;
-            if (cCount != count) {
-                count = cCount;
-            } else {
-                return;
-            }
-        }
+       return extractDomain(url)
     },
 
     enqueueElements: async ({

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "apify": "^0.14.10",
+    "extract-domain": "^2.0.6",
     "request-promise": "^4.2.2",
     "underscore": "^1.9.1"
   }
