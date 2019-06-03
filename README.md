@@ -1,7 +1,7 @@
 # Contact Information Scraper
 **Overview**
 
-This crawler lets you scrape contact information from entire domains. After you supply the root domain (eg www.apify.com), the crawler will retrieve any:
+This crawler lets you scrape contact information from entire domains. After you supply the start URL (eg www.apify.com), the crawler will retrieve any:
 
 - Phone numbers
 - Emails
@@ -10,7 +10,7 @@ This crawler lets you scrape contact information from entire domains. After you 
 - LinkedIn accounts
 - Instagram handles
 
-that are featured on the website and all its pages. As such, this crawler is useful for mining contact information of organizations and online services.
+it finds on the website and all its pages. As such, this crawler is useful for mining contact information of organizations and online services.
 
 **Input Settings**
 
@@ -21,7 +21,6 @@ The crawler lets you specify:
 - Whether it should crawl HTML frames.
 - Whether it should use a proxy.
 - The maximum number of pages it should crawl.
-- Whether it should store all sublinks.
 
 **Results**
 
@@ -29,24 +28,22 @@ The crawler stores the results in a dataset, which can be exported into JSON, HT
 
 ```json
 [{
-  "url": "https://apify.com/privacy-policy#cookies",
-  "domain": "apify.com",
+  "url": "http://www.robertlmyers.com/index.html",
+  "domain": "robertlmyers.com",
   "depth": 2,
-  "referrerUrl": "http://www.apify.com",
+  "referrerUrl": "http://www.robertlmyers.com",
   "emails": [
-    "support@apify.com"
+    "info@robertlmyers.com"
   ],
   "phones": [],
   "phonesUncertain": [
-    "04788290"
+    "717.393.3643"
   ],
   "linkedIns": [],
-  "twitters": [
-    "https://twitter.com/apify"
-  ],
+  "twitters": [],
   "instagrams": [],
   "facebooks": [
-    "https://www.facebook.com/apifytech"
+    "https://www.facebook.com/robertlmyers/"
   ]
 }]
 ```

@@ -4,53 +4,47 @@
     "schemaVersion": 1,
     "properties": {
         "startUrls": {
-            "title": "Base URLs",
+            "title": "Start URLs",
             "type": "array",
-            "description": "Entry-point URLs for the crawler.",
+            "description": "Website URLs for the crawler to scrape.",
             "prefill": [{ "url": "http://www.apify.com" }],
             "editor": "requestListSources"
         },
         "proxyConfig": {
-            "title": "Proxy configuration",
+            "title": "Proxy Configuration",
             "type": "object",
-            "description": "Optionally use Apify Proxy.",
+            "description": "Optionally, use Apify Proxy.",
             "default": {},
             "editor": "proxy"
         },
         "maxDepth": {
-            "title": "Maximum link depth",
+            "title": "Maximum Link Depth",
             "type": "integer",
-            "description": "Upper bound on link depth for crawler to traverse.",
+            "description": "The number of pages away from the original website that the crawler should scrape.",
             "prefill": 2
         },
         "maxRequests": {
-            "title": "Maximum requests",
+            "title": "Maximum Requests",
             "type": "integer",
-            "description": "Upper bound on number of pages the crawler will visit per run.",
+            "description": "The maximum number of pages the crawler should scrape.",
             "prefill": 100
         },
         "liveView": {
-            "title": "Enable LiveView",
+            "title": "Store Screenshots",
             "type": "boolean",
-            "description": "Screenshots of pages will be stored when run in cloud.",
+            "description": "Whether the crawler should store screenshots of the scraped pages.",
             "default": false
         },
         "considerChildFrames": {
             "title": "Crawl Frames",
             "type": "boolean",
-            "description": "The crawler will inspect code loaded inside of HTML frames.",
+            "description": "Whether the crawler should inspect code loaded inside of HTML frames.",
             "default": true
-        },
-        "collectSublinks": {
-            "title": "Store Sublinks",
-            "type": "boolean",
-            "description": "The crawler will store any sublinks it finds.",
-            "default": false
         },
         "sameDomain": {
             "title": "Stay within Domain",
             "type": "boolean",
-            "description": "The crawler will only crawl links within the given domain.",
+            "description": "Whether the crawler should only scrape links within the given domain.",
             "default": true
         }
     },
