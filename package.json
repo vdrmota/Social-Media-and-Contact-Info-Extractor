@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cermak-petr/act-social-extractor"
+    "url": "https://github.com/vdrmota/Social-Media-and-Contact-Info-Extractor"
   },
   "scripts": {
     "start": "node main.js"
