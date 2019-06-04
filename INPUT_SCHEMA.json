@@ -13,7 +13,7 @@
         "proxyConfig": {
             "title": "Proxy Configuration",
             "type": "object",
-            "description": "Optionally, use Apify Proxy.",
+            "description": "You can use an Apify Proxy to bypass IP bans (turn it on if you are experiencing timeout errors).",
             "default": {},
             "editor": "proxy"
         },
