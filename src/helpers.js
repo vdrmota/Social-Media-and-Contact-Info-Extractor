@@ -57,11 +57,11 @@ module.exports = {
             }
 
             // Check if same domain is required
-            var isSameDomain = true
+            var shouldEnqueue = true
             if (input.sameDomain)
-                isSameDomain = module.exports.getDomain(request.url) === domain;
+                shouldEnqueue = module.exports.getDomain(request.url) === domain;
 
-            if (isSameDomain) {
+            if (shouldEnqueue) {
                 await requestQueue.addRequest(new Apify.Request({
                     url: url,
                     userData: {
