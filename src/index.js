@@ -13,15 +13,11 @@ async function main() {
         sources: input.startUrls
     });
 
-    // Add some URL attributes
-    //requestList.sources = await helpers.prepareUrl(requestList.sources);
-
     // Initialize request list
     await requestList.initialize();
 
-    requestList.forEach((el,i) => requestList[i] = await helpers.prepareUrl(el))
-
-    console.log(requestList)
+    // Add some URL attributes
+    requestList.requests.forEach((el,i) => requestList[i] = helpers.prepareUrl(el))
 
     // Puppeteer options
     const launchPuppeteerOptions = input.proxyConfig || {};
