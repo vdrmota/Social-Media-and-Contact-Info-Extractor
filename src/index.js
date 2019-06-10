@@ -8,13 +8,15 @@ async function main() {
     // Create RequestQueue
     const requestQueue = await Apify.openRequestQueue();
 
-    // Clean urls
-    input.startUrls = helpers.cleanUrl(input.startUrls)
-
     // Create requestList
     const requestList = new Apify.RequestList({
         sources: input.startUrls
     });
+
+    // Add some URL attributes
+    requestList.sources = await helpers.prepareUrl(requestList.sources);
+
+    // Initialize request list
     await requestList.initialize();
 
     // Puppeteer options

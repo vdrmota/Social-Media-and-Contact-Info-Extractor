@@ -3,7 +3,7 @@ const _ = require('underscore');
 const extractDomain = require('extract-domain');
 
 module.exports = {
-    cleanUrl: function(urls) {
+    prepareUrl: function(urls) {
         for (let i = 0; i < urls.length; i++) {
             let request = urls[i];
             if (typeof request === 'string') {
@@ -22,6 +22,7 @@ module.exports = {
             request.uniqueKey = request.url,
                 urls[i] = request;
         }
+        console.log(urls)
         return urls
     },
 
