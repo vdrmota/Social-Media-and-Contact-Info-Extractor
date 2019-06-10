@@ -3,27 +3,12 @@ const _ = require('underscore');
 const extractDomain = require('extract-domain');
 
 module.exports = {
-    prepareUrl: function(urls) {
-        for (let i = 0; i < urls.length; i++) {
-            let request = urls[i];
-            if (typeof request === 'string') {
-                request = {
-                    url: request
-                };
-            }
-            if (request.url.length < 1) {
-                continue;
-            }
-            request.userData = {
+    prepareUrl: function(request) {
+        return request.userData = {
                 label: 'ROOT',
                 depth: 1,
                 referrer: null
             };
-            request.uniqueKey = request.url,
-                urls[i] = request;
-        }
-        console.log(urls)
-        return urls
     },
 
     getAttribute: async function(element, attr) {

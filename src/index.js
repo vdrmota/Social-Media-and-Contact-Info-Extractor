@@ -19,6 +19,8 @@ async function main() {
     // Initialize request list
     await requestList.initialize();
 
+    requestList.forEach((el,i) => requestList[i] = await helpers.prepareUrl(el))
+
     console.log(requestList)
 
     // Puppeteer options
