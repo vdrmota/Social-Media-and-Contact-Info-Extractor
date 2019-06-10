@@ -14,7 +14,7 @@ async function main() {
     });
 
     // Add some URL attributes
-    requestList.sources = await helpers.prepareUrl(requestList.sources);
+    //requestList.sources = await helpers.prepareUrl(requestList.sources);
 
     // Initialize request list
     await requestList.initialize();
