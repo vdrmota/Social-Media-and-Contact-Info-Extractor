@@ -13,6 +13,8 @@ async function main() {
         sources: input.startUrls
     });
 
+    console.log(requestList.sources)
+    
     // Add some URL attributes
     requestList.sources = await helpers.prepareUrl(requestList.sources);
 
