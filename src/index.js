@@ -1,9 +1,21 @@
 const Apify = require('apify');
 const helpers = require('./helpers');
-const crawlerConfig = require('./crawlerConfig');
+const crawlerConfig = require('./crawler_config');
+
+// TODOs:
+// - The "extract-domain" is not good, for example, for:
+//  console.log(extractDomain('xxxx.co.uk'))
+// it prints:
+// "co.uk", but it should be "xxxx.co.uk"
+// - Please use Lint with the Apify coding style to improve the code quality
+// - Do not use hard-coded constants (e.g. "60000")
+// -
+
+
 
 async function main() {
     const input = await Apify.getValue('INPUT');
+    if (!input) throw new Error('There is no input!');
 
     // Create RequestQueue
     const requestQueue = await Apify.openRequestQueue();
@@ -21,8 +33,7 @@ async function main() {
 
     // Puppeteer options
     const launchPuppeteerOptions = input.proxyConfig || {};
-    if (input.liveView)
-        launchPuppeteerOptions.liveView = true;
+    if (input.liveView) launchPuppeteerOptions.liveView = true;
 
     // Logic run on page
     const handlePageFunction = async ({
@@ -57,7 +68,7 @@ async function main() {
         var result = {}
         result.html = await page.content();
         result.depth = request.userData.depth
-        result.referrerURL = request.userData.referrer
+        result.referrerUrl = request.userData.referrer
         result.url = await page.url();
         result.domain = await helpers.getDomain(result.url);
 
@@ -69,11 +80,10 @@ async function main() {
         Object.assign(result, mergedSocial)
 
         // Clean up
-        delete result.html
+        delete result.html;
 
         // Store results
-        await Apify.pushData(result)
-
+        await Apify.pushData(result);
     }
 
     const gotoFunction = crawlerConfig.gotoFunction
@@ -86,6 +96,7 @@ async function main() {
         handleFailedRequestFunction: async ({
             request
         }) => {
+            // TODO: I think we should also output failed pages, maybe add a new input option for that
             console.log(`Request ${request.url} failed 4 times`);
         },
         launchPuppeteerOptions,

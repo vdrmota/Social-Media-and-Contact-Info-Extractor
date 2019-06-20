@@ -1,18 +1,21 @@
 # Contact Information Scraper
-**Overview**
 
-This crawler lets you scrape contact information from entire domains. After you supply the start URL (eg www.apify.com), the crawler will retrieve any:
+The actor crawls websites and extracts the following contact information from them:
 
-- Phone numbers
 - Emails
-- Facebook accounts
+- Phone numbers
+- Facebook pages or profiles
 - Twitter handles
-- LinkedIn accounts
-- Instagram handles
+- LinkedIn profiles
+- Instagram profiles
 
-it finds on the website and all its pages. As such, this crawler is useful for mining contact information of organizations and online services.
+It is useful for automated searching for company contact details, profiling of leads
+and marketing campaigns. The actor supports both list of URLs and recursive crawling of websites.
 
-**Input Settings**
+<!-- TODO: link to blog post once published -->
+
+
+## Input Configuration
 
 The crawler lets you specify:
 
@@ -22,9 +25,40 @@ The crawler lets you specify:
 - Whether it should use a proxy.
 - The maximum number of pages it should crawl.
 
-**Results**
+
+## Results
+
+For each page loaded
+
+- Emails
+  ```
+  alice@example.com
+  bob.newman@example.com
+  ```
+- Phone numbers (from elements such as )
+- Uncertain phone numbers - extracted from free text
+
+### Emails
+
+
+
+### LinkedIn profiles
+
+```
+https://www.linkedin.com/in/alan-turing
+en.linkedin.com/in/alan-turing
+linkedin.com/in/alan-turing
+```
 
 The crawler stores the results in a dataset, which can be exported into JSON, HTML, XML, RSS, CSV or Excel. Here is an example JSON output:
+
+- How deep it should crawl into a website's links.
+- Whether it should crawl only within the root domain.
+- Whether it should crawl HTML frames.
+- Whether it should use a proxy.
+- The maximum number of pages it should crawl.
+
+
 
 ```json
 [{
