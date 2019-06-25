@@ -23,7 +23,7 @@ On input, the actor has several input options that specify which pages shall be 
 - **Start URLs** - A list of URLs of web pages where the crawler should start. You can enter multiple URLs,
   a text file with URLs or even a Google Sheets document. 
 - **Maximum link depth** - Specifies how many links away from the web pages specified in Start URLs
-  shall the crawler visit. If zero, the the actor ignores the links and only crawls the Start URLs.
+  shall the crawler visit. If zero, the actor ignores the links and only crawls the Start URLs.
 - **Stay within domain** - If enabled, the actor will only follow links that are on the same domain as the referring page.
   For example, if the setting is enabled and the actor finds on page http://www.example.com/some-page
   a link to http://www.another-domain.com/, it will not crawl the second page,
