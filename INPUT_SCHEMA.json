@@ -13,7 +13,7 @@
         "proxyConfig": {
             "title": "Proxy",
             "type": "object",
-            "description": "Proxy servers let you bypass website protections and avoid IP address blocking. Use the proxy if you are experiencing timeout errors.",
+            "description": "Proxy servers let you bypass website protections, avoid IP address blocking and view content for other countries. Try to use the proxy if you are experiencing timeout errors.",
             "default": {},
             "editor": "proxy"
         },
@@ -27,7 +27,8 @@
         "maxRequests": {
             "title": "Maximum pages",
             "type": "integer",
-            "description": "The maximum number of pages the crawler will load. It is always a good idea to limit the number of pages, otherwise the actor might run infinitely and consume too much resources.",
+            "description": "The maximum number of pages the crawler will load. It is always a good idea to limit the number of pages, otherwise the actor might run infinitely or consume too much resources.",
+            "minimum": 1,
             "prefill": 100
         },
         "sameDomain": {
@@ -39,13 +40,13 @@
         "liveView": {
             "title": "Live view",
             "type": "boolean",
-            "description": "If set, the actor will display a live view where you can monitor its progress. Note that the live view has a small performance overheads.",
+            "description": "If set, the actor will display a live view on the container URL, where you can monitor its progress. Note that the live view has a small performance overheads.",
             "default": false
         },
         "considerChildFrames": {
             "title": "Probe frames",
             "type": "boolean",
-            "description": "If set, the actor will extract contact information also from IFRAMEs. Sometimes, you might not want that.",
+            "description": "If set, the actor will extract contact information also from IFRAMEs. Sometimes, you might not want that (e.g. this will include data from online ads).",
             "default": true
         }
     },

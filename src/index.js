@@ -8,8 +8,10 @@ const crawlerConfig = require('./crawler_config');
 // it prints:
 // "co.uk", but it should be "xxxx.co.uk"
 // - Please use Lint with the Apify coding style to improve the code quality
-// - Do not use hard-coded constants (e.g. "60000")
-// -
+// - Do not use hard-coded constants (e.g. "60000"), it's always better to define
+//   A_VARIABLE_LIKE_THIS with the value and have these in one central location,
+//   e.g. beginngin of file
+// - The same domain check must be case insenstitive
 
 
 
