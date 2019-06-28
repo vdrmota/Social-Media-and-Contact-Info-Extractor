@@ -3,10 +3,6 @@ const helpers = require('./helpers');
 const crawlerConfig = require('./crawler_config');
 const constants = require('./constants.js');
 
-// TODOs:
-// - Please use Lint with the Apify coding style to improve the code quality
-
-
 async function main() {
   const input = await Apify.getValue('INPUT');
   if (!input) throw new Error('There is no input!');
@@ -89,7 +85,6 @@ async function main() {
     handleFailedRequestFunction: async ({
       request,
     }) => {
-      // TODO: I think we should also output failed pages, maybe add a new input option for that
       console.log(`Request ${request.url} failed 4 times`);
     },
     launchPuppeteerOptions,

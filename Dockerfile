@@ -15,4 +15,4 @@ RUN npm install --quiet --only=prod \
  && npm list
 
 # Define that start command
-CMD [ "node", "main.js" ]
+CMD [ "node", "./src/main.js" ]
