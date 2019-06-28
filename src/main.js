@@ -1,4 +1,4 @@
 const Apify = require('apify');
-const main = require('./src/index');
+const main = require('./index.js');
 
 Apify.main(main);

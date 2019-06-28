@@ -1,0 +1,1 @@
+exports.WAIT_FOR_BODY_SECS = 60000

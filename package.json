@@ -9,12 +9,19 @@
     "url": "https://github.com/vdrmota/Social-Media-and-Contact-Info-Extractor"
   },
   "scripts": {
-    "start": "node ./src/main.js"
+    "start": "node ./src/main.js",
+    "lint": "eslint"
   },
   "dependencies": {
     "apify": "^0.14.10",
     "extract-domain": "^2.0.6",
+    "getdomain": "^1.3.1",
     "request-promise": "^4.2.2",
     "underscore": "^1.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.18.0"
   }
 }
