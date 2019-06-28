@@ -1,50 +1,52 @@
 {
-    "title": "Social Media Handles and Contact Info Extractor",
+    "title": "Contact Info Scraper",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
         "startUrls": {
             "title": "Start URLs",
             "type": "array",
-            "description": "Website URLs for the crawler to scrape.",
+            "description": "List of web pages where the actor will start crawling.",
             "prefill": [{ "url": "http://www.apify.com" }],
             "editor": "requestListSources"
         },
         "proxyConfig": {
-            "title": "Proxy Configuration",
+            "title": "Proxy",
             "type": "object",
-            "description": "You can use an Apify Proxy to bypass IP bans (turn it on if you are experiencing timeout errors).",
+            "description": "Proxy servers let you bypass website protections, avoid IP address blocking and view content for other countries. Try to use the proxy if you are experiencing timeout errors.",
             "default": {},
             "editor": "proxy"
         },
         "maxDepth": {
-            "title": "Maximum Link Depth",
+            "title": "Maximum link depth",
             "type": "integer",
-            "description": "The number of pages away from the original website that the crawler should scrape.",
+            "description": "The maximum number of links away from the <b>Start URLs</b> that the actor will crawl. If <code>0</code>, the actor will not follow any links.",
+            "minimum": 0,
             "prefill": 2
         },
         "maxRequests": {
-            "title": "Maximum Requests",
+            "title": "Maximum pages",
             "type": "integer",
-            "description": "The maximum number of pages the crawler should scrape.",
+            "description": "The maximum number of pages the crawler will load. It is always a good idea to limit the number of pages, otherwise the actor might run infinitely or consume too much resources.",
+            "minimum": 1,
             "prefill": 100
         },
-        "liveView": {
-            "title": "Store Screenshots",
+        "sameDomain": {
+            "title": "Stay within domain",
             "type": "boolean",
-            "description": "Whether the crawler should store screenshots of the scraped pages.",
+            "description": "If set, the actor will only follow links within the same domain as the referring page.",
+            "default": true
+        },
+        "liveView": {
+            "title": "Live view",
+            "type": "boolean",
+            "description": "If set, the actor will display a live view on the container URL, where you can monitor its progress. Note that the live view has a small performance overheads.",
             "default": false
         },
         "considerChildFrames": {
-            "title": "Crawl Frames",
+            "title": "Probe frames",
             "type": "boolean",
-            "description": "Whether the crawler should inspect code loaded inside of HTML frames.",
-            "default": true
-        },
-        "sameDomain": {
-            "title": "Stay within Domain",
-            "type": "boolean",
-            "description": "Whether the crawler should only scrape links within the given domain.",
+            "description": "If set, the actor will extract contact information also from IFRAMEs. Sometimes, you might not want that (e.g. this will include data from online ads).",
             "default": true
         }
     },

@@ -9,7 +9,7 @@
     "url": "https://github.com/vdrmota/Social-Media-and-Contact-Info-Extractor"
   },
   "scripts": {
-    "start": "node main.js"
+    "start": "node ./src/main.js"
   },
   "dependencies": {
     "apify": "^0.14.10",
