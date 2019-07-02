@@ -13,15 +13,15 @@ Apify.main(async () => {
     const requestQueue = await Apify.openRequestQueue();
 
     // Create RequestList
-    const requestList = await Apify.openRequestList('start-urls', input.startUrls);
-
-    // Initialize request list
-    await requestList.initialize();
-
-    // Add some URL attributes
-    // TODO: This is a bad design - it's accessing an internal field of RequestList,
-    // this needs to be done before calling new Apify.RequestList constructor
-    requestList.requests.forEach((el, i) => requestList[i] = helpers.prepareUrl(el));
+    const sources = input.startUrls.map((rec) => {
+        const request = new Apify.Request(rec);
+        request.userData = {
+            depth: 0,
+            referrer: null,
+        };
+        return request;
+    });
+    const requestList = await Apify.openRequestList('start-urls', sources);
 
     // Puppeteer options
     const launchPuppeteerOptions = input.proxyConfig || {};
@@ -42,7 +42,7 @@ Apify.main(async () => {
             });
 
             // Enqueue all links on the page
-            if (typeof input.maxDepth !== 'number' || input.maxDepth > request.userData.depth) {
+            if (typeof input.maxDepth !== 'number' || request.userData.depth <= input.maxDepth) {
                 await helpers.enqueueElements({
                     page,
                     requestQueue,
