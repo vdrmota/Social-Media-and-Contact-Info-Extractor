@@ -91,7 +91,7 @@ module.exports = {
   mergeSocial(frames, main) {
     const output = main;
 
-    for (key in output) {
+    for (const key in output) {
       main[key] = _.uniq(main[key].concat(frames[key]));
     }
 
