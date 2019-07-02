@@ -1,6 +1,5 @@
 const Apify = require('apify');
 const helpers = require('./helpers');
-const crawlerConfig = require('./crawler_config');
 
 
 const PAGE_GOTO_TIMEOUT_SECS = 200;
@@ -13,8 +12,8 @@ Apify.main(async () => {
     // Create RequestQueue
     const requestQueue = await Apify.openRequestQueue();
 
-    // Create requestList
-    const requestList = new Apify.RequestList({
+    // Create RequestList
+    const requestList = await Apify.openRequestList('start-urls', {
         sources: input.startUrls,
     });
 
