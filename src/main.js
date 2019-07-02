@@ -13,9 +13,7 @@ Apify.main(async () => {
     const requestQueue = await Apify.openRequestQueue();
 
     // Create RequestList
-    const requestList = await Apify.openRequestList('start-urls', {
-        sources: input.startUrls,
-    });
+    const requestList = await Apify.openRequestList('start-urls', input.startUrls);
 
     // Initialize request list
     await requestList.initialize();
