@@ -3,14 +3,6 @@ const _ = require('underscore');
 const domain = require('getdomain');
 
 module.exports = {
-  prepareUrl(request) {
-    return request.userData = {
-      label: 'ROOT',
-      depth: 1,
-      referrer: null,
-    };
-  },
-
   async getAttribute(element, attr) {
     try {
       const prop = await element.getProperty(attr);
@@ -50,7 +42,6 @@ module.exports = {
         await requestQueue.addRequest(new Apify.Request({
           url,
           userData: {
-            label: 'BRANCH',
             depth: request.userData.depth + 1,
             referrer: request.url,
           },
@@ -91,7 +82,7 @@ module.exports = {
   mergeSocial(frames, main) {
     const output = main;
 
-    for (key in output) {
+    for (const key in output) {
       main[key] = _.uniq(main[key].concat(frames[key]));
     }
 

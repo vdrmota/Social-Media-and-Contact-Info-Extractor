@@ -7,7 +7,7 @@
             "title": "Start URLs",
             "type": "array",
             "description": "List of web pages where the actor will start crawling.",
-            "prefill": [{ "url": "http://www.apify.com" }],
+            "prefill": [{ "url": "https://apify.com" }],
             "editor": "requestListSources"
         },
         "proxyConfig": {
@@ -20,7 +20,7 @@
         "maxDepth": {
             "title": "Maximum link depth",
             "type": "integer",
-            "description": "The maximum number of links away from the <b>Start URLs</b> that the actor will crawl. If <code>0</code>, the actor will not follow any links.",
+            "description": "The maximum number of links away from the <b>Start URLs</b> that the actor will crawl. If <code>0</code>, the actor will not follow any links. If empty or null, the actor will follow links to arbitrary depth.",
             "minimum": 0,
             "prefill": 2
         },

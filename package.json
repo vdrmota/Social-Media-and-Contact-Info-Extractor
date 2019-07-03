@@ -1,5 +1,5 @@
 {
-  "name": "act-social-extractor",
+  "name": "actor-social-extractor",
   "version": "1.0.0",
   "description": "Apify actor for extracting e-mails, phone numbers and social network links from a website.",
   "main": "main.js",
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "node ./src/main.js",
-    "lint": "eslint"
+    "lint": "./node_modules/.bin/eslint ./src",
+    "lint:fix": "./node_modules/.bin/eslint ./src --ext .js --fix"
   },
   "dependencies": {
     "apify": "^0.14.10",
@@ -20,7 +21,7 @@
     "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.18.0"
   }
