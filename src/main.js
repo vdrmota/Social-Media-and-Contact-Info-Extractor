@@ -45,12 +45,13 @@ Apify.main(async () => {
         page,
         requestQueue,
         selector: 'a',
-        pseudoUrls: input.sameDomain ? [`[.*]${helpers.getDomain(request.url)}[.*]`] : null,
+        sameDomain: input.sameDomain,
+        urlDomain: helpers.getDomain(request.url),
       };
 
       // Enqueue all links on the page
       if (typeof input.maxDepth !== 'number' || request.userData.depth <= input.maxDepth) {
-        await Apify.utils.enqueueLinks(linksToEnqueueOptions);
+        await helpers.enqueueUrls(linksToEnqueueOptions);
       }
 
       // Crawl HTML frames

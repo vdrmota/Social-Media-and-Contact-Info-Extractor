@@ -2,6 +2,62 @@ const Apify = require('apify');
 const _ = require('underscore');
 const domain = require('getdomain');
 
+const { Request } = Apify;
+
+async function extractUrlsFromPage(page, selector, sameDomain, urlDomain) {
+  /* istanbul ignore next */
+  const output = await page.$$eval(selector, linkEls => linkEls
+    .map(link => link.href)
+    .filter(href => !!href));
+
+  return output.filter(url => (sameDomain ? module.exports.getDomain(url) === urlDomain : true));
+}
+
+function createRequestOptions(sources, userData = {}) {
+  return sources
+    .map(src => (typeof src === 'string' ? { url: src } : src))
+    .filter(({ url }) => {
+      try {
+        return new URL(url).href;
+      } catch (err) {
+        return false;
+      }
+    })
+    .map((rqOpts) => {
+      const rqOptsWithData = rqOpts;
+      rqOptsWithData.userData = { ...rqOpts.userData, ...userData };
+      return rqOptsWithData;
+    });
+}
+
+function createRequests(requestOptions, pseudoUrls) {
+  if (!(pseudoUrls && pseudoUrls.length)) {
+    return requestOptions.map(opts => new Request(opts));
+  }
+
+  const requests = [];
+  requestOptions.forEach((opts) => {
+    pseudoUrls
+      .filter(purl => purl.matches(opts.url))
+      .forEach((purl) => {
+        const request = purl.createRequest(opts);
+        requests.push(request);
+      });
+  });
+  return requests;
+}
+
+async function addRequestsToQueueInBatches(requests, requestQueue, batchSize = 5) {
+  const queueOperationInfos = [];
+  requests.forEach(async (request) => {
+    /* eslint-disable no-await-in-loop */
+    queueOperationInfos.push(requestQueue.addRequest(request));
+    if (queueOperationInfos.length % batchSize === 0) await Promise.all(queueOperationInfos);
+    /* eslint-enable no-await-in-loop */
+  });
+  return Promise.all(queueOperationInfos);
+}
+
 module.exports = {
   async getAttribute(element, attr) {
     try {
@@ -51,5 +107,21 @@ module.exports = {
     });
 
     return output;
+  },
+
+  enqueueUrls: async (options = {}) => {
+    const {
+      page,
+      requestQueue,
+      selector = 'a',
+      sameDomain,
+      urlDomain,
+    } = options;
+
+    const urls = await extractUrlsFromPage(page, selector, sameDomain, urlDomain);
+    const requestOptions = createRequestOptions(urls);
+
+    const requests = createRequests(requestOptions);
+    return addRequestsToQueueInBatches(requests, requestQueue);
   },
 };
