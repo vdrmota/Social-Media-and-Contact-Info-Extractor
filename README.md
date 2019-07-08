@@ -115,4 +115,4 @@ For each page crawled, the resulting dataset contains a single record, which loo
 
 The actor is built using [Social utils](https://sdk.apify.com/docs/api/social) from the [Apify SDK](https://sdk.apify.com).
 If you need to have more control about the crawling and data extraction process, you can relatively 
-easily build a new actor using the Apify SDK. For more details, see [Actors documentation](https://apify.com/docs). 
+easily build a new actor using the Apify SDK. For more details, see [Actors documentation](https://apify.com/docs). You can also read more about this particular actor in our [blogpost](https://blog.apify.com/contact-information-scraper-7104cb0df25e).
