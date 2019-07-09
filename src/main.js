@@ -47,10 +47,11 @@ Apify.main(async () => {
         selector: 'a',
         sameDomain: input.sameDomain,
         urlDomain: helpers.getDomain(request.url),
+        depth: request.userData.depth,
       };
-
+      console.log(request.userData.depth)
       // Enqueue all links on the page
-      if (typeof input.maxDepth !== 'number' || request.userData.depth <= input.maxDepth) {
+      if (typeof input.maxDepth !== 'number' || request.userData.depth < input.maxDepth) {
         await helpers.enqueueUrls(linksToEnqueueOptions);
       }
 

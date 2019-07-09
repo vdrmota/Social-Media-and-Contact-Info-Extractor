@@ -116,10 +116,12 @@ module.exports = {
       selector = 'a',
       sameDomain,
       urlDomain,
+      depth,
     } = options;
 
     const urls = await extractUrlsFromPage(page, selector, sameDomain, urlDomain);
-    const requestOptions = createRequestOptions(urls);
+
+    const requestOptions = createRequestOptions(urls, { depth: depth + 1 });
 
     const requests = createRequests(requestOptions);
     return addRequestsToQueueInBatches(requests, requestQueue);
