@@ -15,10 +15,10 @@ Apify.main(async () => {
 
   requestList.requests.forEach((req) => {
     req.userData = {
-        depth: 0,
-        referrer: null,
-      };
-  })
+      depth: 0,
+      referrer: null,
+    };
+  });
 
 
   // Puppeteer options
