@@ -11,16 +11,15 @@ Apify.main(async () => {
   // Create RequestQueue
   const requestQueue = await Apify.openRequestQueue();
 
-  // Create RequestList
-  const sources = input.startUrls.map((rec) => {
-    const request = new Apify.Request(rec);
-    request.userData = {
-      depth: 0,
-      referrer: null,
-    };
-    return request;
-  });
-  const requestList = await Apify.openRequestList('start-urls', sources);
+  const requestList = await Apify.openRequestList('start-urls', input.startUrls);
+
+  requestList.requests.forEach((req) => {
+    req.userData = {
+        depth: 0,
+        referrer: null,
+      };
+  })
+
 
   // Puppeteer options
   const launchPuppeteerOptions = input.proxyConfig || {};
