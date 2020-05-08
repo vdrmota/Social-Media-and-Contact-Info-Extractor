@@ -24,9 +24,11 @@ Apify.main(async () => {
     const requestsPerStartUrlCounter = (await Apify.getValue('STATE-REQUESTS-PER-START-URL')) || {};
 
     if (maxRequestsPerStartUrl) {
-        Apify.events.on('migrating', async () => {
+        const persistRequestsPerStartUrlCounter = async () => {
             await Apify.setValue('STATE-REQUESTS-PER-START-URL', requestsPerStartUrlCounter);
-        });
+        };
+        setInterval(persistRequestsPerStartUrlCounter, 60000);
+        Apify.events.on('migrating', persistRequestsPerStartUrlCounter);
     }
 
     // Create RequestQueue
@@ -41,7 +43,12 @@ Apify.main(async () => {
             startUrl: req.url,
         };
         if (maxRequestsPerStartUrl) {
-            requestsPerStartUrlCounter[req.url] = 1;
+            if (!requestsPerStartUrlCounter[req.url]) {
+                requestsPerStartUrlCounter[req.url] = {
+                    counter: 1,
+                    wasLogged: false,
+                };
+            }
         }
     });
 

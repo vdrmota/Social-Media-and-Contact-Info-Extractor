@@ -47,15 +47,23 @@ function createRequests(requestOptions, pseudoUrls) {
     return requests;
 }
 
-async function addRequestsToQueueInBatches(requests, requestQueue, batchSize = 5) {
-    const queueOperationInfos = [];
-    requests.forEach(async (request) => {
-        /* eslint-disable no-await-in-loop */
-        queueOperationInfos.push(requestQueue.addRequest(request));
-        if (queueOperationInfos.length % batchSize === 0) await Promise.all(queueOperationInfos);
-        /* eslint-enable no-await-in-loop */
-    });
-    return Promise.all(queueOperationInfos);
+async function addRequestsToQueue({ requests, requestQueue, maxRequestsPerStartUrl, requestsPerStartUrlCounter, startUrl }) {
+    for (const request of requests) {
+        if (maxRequestsPerStartUrl) {
+            if (requestsPerStartUrlCounter[startUrl].counter < maxRequestsPerStartUrl) {
+                request.userData.startUrl = startUrl;
+                const { wasAlreadyPresent } = await requestQueue.addRequest(request);
+                if (!wasAlreadyPresent) {
+                    requestsPerStartUrlCounter[startUrl].counter++;
+                }
+            } else if (!requestsPerStartUrlCounter[startUrl].wasLogged) {
+                console.warn(`Reached max pages for start URL: ${startUrl}, will not enqueue any more`);
+                requestsPerStartUrlCounter[startUrl].wasLogged = true;
+            }
+        } else {
+            await requestQueue.addRequest(request);
+        }
+    }
 }
 
 module.exports = {
@@ -122,17 +130,11 @@ module.exports = {
             requestsPerStartUrlCounter,
         } = options;
 
-        let urls = await extractUrlsFromPage(page, selector, sameDomain, urlDomain);
-        if (maxRequestsPerStartUrl) {
-            const currentCounterForStartUrl = requestsPerStartUrlCounter[startUrl];
-            const countToEnqueue = maxRequestsPerStartUrl - currentCounterForStartUrl;
-            urls = urls.slice(0, countToEnqueue);
-        }
+        const urls = await extractUrlsFromPage(page, selector, sameDomain, urlDomain);
 
         const requestOptions = createRequestOptions(urls, { depth: depth + 1 });
 
         const requests = createRequests(requestOptions);
-        await addRequestsToQueueInBatches(requests, requestQueue);
-        requestsPerStartUrlCounter[startUrl] += urls.length;
+        await addRequestsToQueue({ requests, requestQueue, startUrl, maxRequestsPerStartUrl, requestsPerStartUrlCounter });
     },
 };
