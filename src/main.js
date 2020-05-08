@@ -1,6 +1,8 @@
 const Apify = require('apify');
 const helpers = require('./helpers');
 
+const { log } = Apify.utils;
+
 const PAGE_GOTO_TIMEOUT_SECS = 200;
 const WAIT_FOR_BODY_SECS = 60;
 
@@ -66,7 +68,7 @@ Apify.main(async () => {
         requestList,
         requestQueue,
         handlePageFunction: async ({ page, request }) => {
-            console.log(`Processing ${request.url}`);
+            log.info(`Processing ${request.url}`);
 
             // Wait for body tag to load
             await page.waitForSelector('body', {
@@ -120,11 +122,11 @@ Apify.main(async () => {
             await Apify.pushData(result);
         },
         handleFailedRequestFunction: async ({ request }) => {
-            console.log(`Request ${request.url} failed 4 times`);
+            log.error(`Request ${request.url} failed 4 times`);
         },
         launchPuppeteerOptions,
         gotoFunction: async ({ page, request }) => {
-            console.log(`Loading ${request.url}`);
+            log.info(`Loading ${request.url}`);
 
             // Block resources such as images and CSS files, to increase crawling speed
             await Apify.utils.puppeteer.blockRequests(page);

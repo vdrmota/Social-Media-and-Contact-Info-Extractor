@@ -2,20 +2,22 @@ const Apify = require('apify');
 const _ = require('underscore');
 const domain = require('getdomain');
 
+const { log } = Apify.utils;
+
 const { Request } = Apify;
 
 async function extractUrlsFromPage(page, selector, sameDomain, urlDomain) {
     /* istanbul ignore next */
-    const output = await page.$$eval(selector, linkEls => linkEls
-        .map(link => link.href)
-        .filter(href => !!href));
+    const output = await page.$$eval(selector, (linkEls) => linkEls
+        .map((link) => link.href)
+        .filter((href) => !!href));
 
-    return output.filter(url => (sameDomain ? module.exports.getDomain(url) === urlDomain : true));
+    return output.filter((url) => (sameDomain ? module.exports.getDomain(url) === urlDomain : true));
 }
 
 function createRequestOptions(sources, userData = {}) {
     return sources
-        .map(src => (typeof src === 'string' ? { url: src } : src))
+        .map((src) => (typeof src === 'string' ? { url: src } : src))
         .filter(({ url }) => {
             try {
                 return new URL(url).href;
@@ -32,13 +34,13 @@ function createRequestOptions(sources, userData = {}) {
 
 function createRequests(requestOptions, pseudoUrls) {
     if (!(pseudoUrls && pseudoUrls.length)) {
-        return requestOptions.map(opts => new Request(opts));
+        return requestOptions.map((opts) => new Request(opts));
     }
 
     const requests = [];
     requestOptions.forEach((opts) => {
         pseudoUrls
-            .filter(purl => purl.matches(opts.url))
+            .filter((purl) => purl.matches(opts.url))
             .forEach((purl) => {
                 const request = purl.createRequest(opts);
                 requests.push(request);
@@ -57,7 +59,7 @@ async function addRequestsToQueue({ requests, requestQueue, maxRequestsPerStartU
                     requestsPerStartUrlCounter[startUrl].counter++;
                 }
             } else if (!requestsPerStartUrlCounter[startUrl].wasLogged) {
-                console.warn(`Enqueued max pages for start URL: ${startUrl}, will not enqueue any more`);
+                log.warning(`Enqueued max pages for start URL: ${startUrl}, will not enqueue any more`);
                 requestsPerStartUrlCounter[startUrl].wasLogged = true;
             }
         } else {
@@ -93,7 +95,7 @@ module.exports = {
                     socialHandles[field] = childSocialHandles[field];
                 });
             } catch (e) {
-                console.log(e);
+                log.info(e);
             }
         });
 
