@@ -8,10 +8,20 @@ Apify.main(async () => {
     const input = await Apify.getValue('INPUT');
     if (!input) throw new Error('There is no input!');
 
+    const {
+        startUrls,
+        proxyConfig,
+        liveView,
+        sameDomain,
+        maxDepth,
+        considerChildFrames,
+        maxRequests,
+    } = input;
+
     // Create RequestQueue
     const requestQueue = await Apify.openRequestQueue();
 
-    const requestList = await Apify.openRequestList('start-urls', input.startUrls);
+    const requestList = await Apify.openRequestList('start-urls', startUrls);
 
     requestList.requests.forEach((req) => {
         req.userData = {
@@ -22,8 +32,10 @@ Apify.main(async () => {
 
 
     // Puppeteer options
-    const launchPuppeteerOptions = input.proxyConfig || {};
-    if (input.liveView) launchPuppeteerOptions.liveView = true;
+    const launchPuppeteerOptions = proxyConfig || {};
+    if (liveView) {
+        launchPuppeteerOptions.liveView = true;
+    }
     launchPuppeteerOptions.stealth = true;
     launchPuppeteerOptions.useChrome = true;
 
@@ -44,19 +56,19 @@ Apify.main(async () => {
                 page,
                 requestQueue,
                 selector: 'a',
-                sameDomain: input.sameDomain,
+                sameDomain,
                 urlDomain: helpers.getDomain(request.url),
                 depth: request.userData.depth,
             };
 
             // Enqueue all links on the page
-            if (typeof input.maxDepth !== 'number' || request.userData.depth < input.maxDepth) {
+            if (typeof maxDepth !== 'number' || request.userData.depth < maxDepth) {
                 await helpers.enqueueUrls(linksToEnqueueOptions);
             }
 
             // Crawl HTML frames
             let frameSocialHandles = {};
-            if (input.considerChildFrames) {
+            if (considerChildFrames) {
                 frameSocialHandles = await helpers.crawlFrames(page);
             }
 
@@ -99,7 +111,7 @@ Apify.main(async () => {
     };
 
     // Limit requests
-    if (input.maxRequests) crawlerOptions.maxRequestsPerCrawl = input.maxRequests;
+    if (maxRequests) crawlerOptions.maxRequestsPerCrawl = maxRequests;
 
     // Create crawler
     const crawler = new Apify.PuppeteerCrawler(crawlerOptions);
