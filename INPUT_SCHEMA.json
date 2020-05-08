@@ -25,11 +25,17 @@
             "prefill": 2
         },
         "maxRequests": {
-            "title": "Maximum pages",
+            "title": "Total maximum pages",
             "type": "integer",
             "description": "The maximum number of pages the crawler will load. It is always a good idea to limit the number of pages, otherwise the actor might run infinitely or consume too much resources.",
             "minimum": 1,
             "prefill": 100
+        },
+        "maxRequestsPerStartUrl": {
+            "title": "Maximum pages per start URL",
+            "type": "integer",
+            "description": "The maximum number of pages that will be enqueued from each start URL you provide.",
+            "minimum": 1
         },
         "sameDomain": {
             "title": "Stay within domain",
