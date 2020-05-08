@@ -15,8 +15,19 @@ Apify.main(async () => {
         sameDomain,
         maxDepth,
         considerChildFrames,
+        // These are total (kept naming for backward compatibillity)
         maxRequests,
+        maxRequestsPerStartUrl,
     } = input;
+
+    // Object with startUrls as keys and counters as values
+    const requestsPerStartUrlCounter = (await Apify.getValue('STATE-REQUESTS-PER-START-URL')) || {};
+
+    if (maxRequestsPerStartUrl) {
+        Apify.events.on('migrating', async () => {
+            await Apify.setValue('STATE-REQUESTS-PER-START-URL', requestsPerStartUrlCounter);
+        });
+    }
 
     // Create RequestQueue
     const requestQueue = await Apify.openRequestQueue();
@@ -27,7 +38,11 @@ Apify.main(async () => {
         req.userData = {
             depth: 0,
             referrer: null,
+            startUrl: req.url,
         };
+        if (maxRequestsPerStartUrl) {
+            requestsPerStartUrlCounter[req.url] = 1;
+        }
     });
 
 
@@ -58,7 +73,11 @@ Apify.main(async () => {
                 selector: 'a',
                 sameDomain,
                 urlDomain: helpers.getDomain(request.url),
+                startUrl: request.userData.startUrl,
                 depth: request.userData.depth,
+                // These options makes the enqueueUrls call stateful. It would be better to refactor this.
+                maxRequestsPerStartUrl,
+                requestsPerStartUrlCounter,
             };
 
             // Enqueue all links on the page
