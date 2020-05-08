@@ -57,7 +57,7 @@ async function addRequestsToQueue({ requests, requestQueue, maxRequestsPerStartU
                     requestsPerStartUrlCounter[startUrl].counter++;
                 }
             } else if (!requestsPerStartUrlCounter[startUrl].wasLogged) {
-                console.warn(`Reached max pages for start URL: ${startUrl}, will not enqueue any more`);
+                console.warn(`Enqueued max pages for start URL: ${startUrl}, will not enqueue any more`);
                 requestsPerStartUrlCounter[startUrl].wasLogged = true;
             }
         } else {
