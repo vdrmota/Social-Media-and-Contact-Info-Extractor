@@ -126,8 +126,6 @@ Apify.main(async () => {
         },
         launchPuppeteerOptions,
         gotoFunction: async ({ page, request }) => {
-            log.info(`Loading ${request.url}`);
-
             // Block resources such as images and CSS files, to increase crawling speed
             await Apify.utils.puppeteer.blockRequests(page);
 
