@@ -13,7 +13,6 @@ Apify.main(async () => {
     const {
         startUrls,
         proxyConfig,
-        liveView,
         sameDomain,
         maxDepth,
         considerChildFrames,
@@ -33,9 +32,7 @@ Apify.main(async () => {
         Apify.events.on('migrating', persistRequestsPerStartUrlCounter);
     }
 
-    // Create RequestQueue
     const requestQueue = await Apify.openRequestQueue();
-
     const requestList = await Apify.openRequestList('start-urls', startUrls);
 
     requestList.requests.forEach((req) => {
@@ -54,19 +51,17 @@ Apify.main(async () => {
         }
     });
 
-
-    // Puppeteer options
-    const launchPuppeteerOptions = proxyConfig || {};
-    if (liveView) {
-        launchPuppeteerOptions.liveView = true;
-    }
-    launchPuppeteerOptions.stealth = true;
-    launchPuppeteerOptions.useChrome = true;
+    const proxyConfiguration = await Apify.createProxyConfiguration(proxyConfig);
 
     // Create the crawler
     const crawlerOptions = {
         requestList,
         requestQueue,
+        proxyConfiguration,
+        launchContext: {
+            useChrome: true,
+            stealth: true,
+        },
         handlePageFunction: async ({ page, request }) => {
             log.info(`Processing ${request.url}`);
 
@@ -101,15 +96,20 @@ Apify.main(async () => {
             }
 
             // Generate result
-            const result = {};
-            result.html = await page.content();
-            result.depth = request.userData.depth;
-            result.referrerUrl = request.userData.referrer;
-            result.url = await page.url();
-            result.domain = await helpers.getDomain(result.url);
+            const { userData: { depth, referrer } } = request;
+            const url = page.url();
+            const html = await page.content();
+
+            const result = {
+                html,
+                depth,
+                referrerUrl: referrer,
+                url,
+                domain: helpers.getDomain(url)
+            };
 
             // Extract and save handles, emails, phone numbers
-            const socialHandles = await Apify.utils.social.parseHandlesFromHtml(result.html);
+            const socialHandles = Apify.utils.social.parseHandlesFromHtml(html);
 
             // Merge frames with main
             const mergedSocial = helpers.mergeSocial(frameSocialHandles, socialHandles);
@@ -124,7 +124,6 @@ Apify.main(async () => {
         handleFailedRequestFunction: async ({ request }) => {
             log.error(`Request ${request.url} failed 4 times`);
         },
-        launchPuppeteerOptions,
         gotoFunction: async ({ page, request }) => {
             // Block resources such as images and CSS files, to increase crawling speed
             await Apify.utils.puppeteer.blockRequests(page);
@@ -143,5 +142,7 @@ Apify.main(async () => {
     const crawler = new Apify.PuppeteerCrawler(crawlerOptions);
 
     // Run crawler
+    log.info(`Starting the crawl...`);
     await crawler.run();
+    log.info(`Crawl finished`);
 });

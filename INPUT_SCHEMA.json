@@ -44,12 +44,6 @@
           "description": "If set, the actor will extract contact information also from IFRAMEs. Sometimes, you might not want that (e.g. this will include data from online ads).",
           "default": true
       },
-      "liveView": {
-          "title": "Live view",
-          "type": "boolean",
-          "description": "If set, the actor will display a live view on the container URL, where you can monitor its progress. Note that the live view has a small performance overheads.",
-          "default": false
-      },
       "proxyConfig": {
           "title": "Proxy",
           "type": "object",

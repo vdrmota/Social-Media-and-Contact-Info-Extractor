@@ -1,18 +1,17 @@
-# Here you choose the base Docker image for the act. Apify provides the following images:
-#  apify/actor-node-basic
-#  apify/actor-node-chrome
-#  apify/actor-node-puppeteer
-# However, you can use any other image from Docker Hub.
-# For more information, see https://www.apify.com/docs/actor#base-images
-FROM apify/actor-node-chrome
+FROM apify/actor-node-puppeteer-chrome:16
 
-# Copy all files and directories from the directory to the Docker image
+COPY package*.json ./
+
+RUN npm --quiet set progress=false \
+ && npm install --only=prod --no-optional \
+ && echo "Installed NPM packages:" \
+ && (npm list || true) \
+ && echo "Node.js version:" \
+ && node --version \
+ && echo "NPM version:" \
+ && npm --version
+
 COPY . ./
 
-# Install NPM packages, skip optional and development dependencies to keep the image small,
-# avoid logging to much and show log the dependency tree
-RUN npm install --quiet --only=prod \
- && npm list
-
-# Define that start command
-CMD [ "node", "./src/main.js" ]
+ENV APIFY_DISABLE_OUTDATED_WARNING 1
+ENV npm_config_loglevel=silent
