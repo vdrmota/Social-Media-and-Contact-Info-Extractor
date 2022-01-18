@@ -1,4 +1,5 @@
 const Apify = require('apify');
+const { normalizeUrls } = require('./helpers');
 const helpers = require('./helpers');
 
 const { log } = Apify.utils;
@@ -33,7 +34,7 @@ Apify.main(async () => {
     }
 
     const requestQueue = await Apify.openRequestQueue();
-    const requestList = await Apify.openRequestList('start-urls', startUrls);
+    const requestList = await Apify.openRequestList('start-urls', normalizeUrls(startUrls));
 
     requestList.requests.forEach((req) => {
         req.userData = {

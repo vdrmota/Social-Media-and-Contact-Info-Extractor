@@ -141,4 +141,14 @@ module.exports = {
         const requests = createRequests(requestOptions);
         await addRequestsToQueue({ requests, requestQueue, startUrl, maxRequestsPerStartUrl, requestsPerStartUrlCounter });
     },
+
+    normalizeUrls: (urls) => {
+        const URL_PREFIX = 'http://www.';
+
+        return urls.map(({ url }) => {
+            const normalizedW = url.replace(/^www./, URL_PREFIX);
+            const normalizedUrl = normalizedW.startsWith(URL_PREFIX) ? normalizedW : `${URL_PREFIX}${normalizedW}`;
+            return normalizedUrl;
+        });
+    },
 };
