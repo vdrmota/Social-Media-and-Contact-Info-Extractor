@@ -115,7 +115,9 @@ module.exports = {
         const output = main;
 
         Object.keys(output).forEach((key) => {
-            output[key] = _.uniq(main[key].concat(frames[key]));
+            // If frames[key] is undefined, we get [item, null] from concatenation.
+            const keyResult = frames[key] ? main[key].concat(frames[key]) : main[key];
+            output[key] = _.uniq(keyResult);
         });
 
         return output;
@@ -143,11 +145,13 @@ module.exports = {
     },
 
     normalizeUrls: (urls) => {
-        const URL_PREFIX = 'http://www.';
-
+        const URL_PREFIX = 'http://';
         return urls.map(({ url }) => {
-            const normalizedW = url.replace(/^www./, URL_PREFIX);
-            const normalizedUrl = normalizedW.startsWith(URL_PREFIX) ? normalizedW : `${URL_PREFIX}${normalizedW}`;
+            const urlWithNormalizedPrefix = url.replace(/^(https?:\/\/)(www\.)?/, URL_PREFIX);
+            const normalizedUrl = urlWithNormalizedPrefix.startsWith(URL_PREFIX)
+                ? urlWithNormalizedPrefix
+                : `${URL_PREFIX}${url}`;
+    
             return normalizedUrl;
         });
     },
