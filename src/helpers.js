@@ -85,30 +85,42 @@ module.exports = {
     },
 
     crawlFrames: async (page) => {
+        const socialMedia = [
+            'emails',
+            'phones',
+            'phonesUncertain',
+            'linkedIns',
+            'twitters',
+            'instagrams',
+            'facebooks',
+            'youtubes',
+            'tiktoks',
+            'pinterests',
+            'discords'
+        ];
         const socialHandles = {};
+        
         page.mainFrame().childFrames().forEach(async (item) => {
-            const html = await item.content();
-            let childSocialHandles = null;
-            const childParseData = {};
             try {
+                const html = await item.content();
+                let childSocialHandles = null;
+                const childParseData = {};
                 childSocialHandles = Apify.utils.social.parseHandlesFromHtml(html, childParseData);
 
-                ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((field) => {
+                socialMedia.forEach((field) => {
                     socialHandles[field] = childSocialHandles[field];
                 });
             } catch (e) {
-                log.info(e);
+                log.warning(e);
             }
         });
 
 
-        ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((field) => {
+        socialMedia.forEach((field) => {
             socialHandles[field] = _.uniq(socialHandles[field]);
         });
 
-        return new Promise((resolve) => {
-            resolve(socialHandles);
-        });
+        return socialHandles;
     },
 
     mergeSocial(frames, main) {
