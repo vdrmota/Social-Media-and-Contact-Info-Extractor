@@ -60,8 +60,10 @@ Apify.main(async () => {
         requestQueue,
         proxyConfiguration,
         launchContext: {
-            useChrome: true,
-            stealth: true,
+            useIncognitoPages: true,
+        },
+        browserPoolOptions: {
+            useFingerprints: true,
         },
         handlePageFunction: async ({ page, request }) => {
             log.info(`Processing ${request.url}`);
@@ -115,7 +117,7 @@ Apify.main(async () => {
             // Merge frames with main
             const mergedSocial = helpers.mergeSocial(frameSocialHandles, socialHandles);
             Object.assign(result, mergedSocial);
-
+            
             // Clean up
             delete result.html;
 

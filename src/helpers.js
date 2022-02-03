@@ -100,7 +100,8 @@ module.exports = {
         ];
         const socialHandles = {};
         
-        page.mainFrame().childFrames().forEach(async (item) => {
+        const frames = page.mainFrame().childFrames();
+        frames.forEach(async (item) => {
             try {
                 const html = await item.content();
                 let childSocialHandles = null;
@@ -111,7 +112,7 @@ module.exports = {
                     socialHandles[field] = childSocialHandles[field];
                 });
             } catch (e) {
-                log.warning(e);
+                log.warning('One of the child frames failed to load', { message: e.toString(), url: page.url() });
             }
         });
 
@@ -157,14 +158,15 @@ module.exports = {
     },
 
     normalizeUrls: (urls) => {
-        const URL_PREFIX = 'http://';
+        const PROTOCOL_REGEX = /^((.)+:\/\/)/;
+        const BASE_URL_PATTERN = 'http://example.com';
+
         return urls.map(({ url }) => {
-            const urlWithNormalizedPrefix = url.replace(/^(https?:\/\/)(www\.)?/, URL_PREFIX);
-            const normalizedUrl = urlWithNormalizedPrefix.startsWith(URL_PREFIX)
-                ? urlWithNormalizedPrefix
-                : `${URL_PREFIX}${url}`;
+            const urlWithoutProtocol = url.replace(PROTOCOL_REGEX, '');
+            const relativeUrl = `//${urlWithoutProtocol}`;
+            const normalizedUrl = new URL(relativeUrl, BASE_URL_PATTERN)
     
-            return normalizedUrl;
+            return normalizedUrl.toString();
         });
     },
 };
