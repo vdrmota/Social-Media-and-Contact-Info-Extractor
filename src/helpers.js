@@ -27,6 +27,7 @@ function createRequestOptions(sources, userData = {}) {
                 return false;
             }
         })
+        .filter(({ url }) => !url.match(/\.(jp(e)?g|bmp|png|mp3|m4a|mkv|avi)$/gi))
         .map((rqOpts) => {
             const rqOptsWithData = rqOpts;
             rqOptsWithData.userData = { ...rqOpts.userData, ...userData };
@@ -85,37 +86,52 @@ module.exports = {
     },
 
     crawlFrames: async (page) => {
+        const socialMedia = [
+            'emails',
+            'phones',
+            'phonesUncertain',
+            'linkedIns',
+            'twitters',
+            'instagrams',
+            'facebooks',
+            'youtubes',
+            'tiktoks',
+            'pinterests',
+            'discords'
+        ];
         const socialHandles = {};
-        page.mainFrame().childFrames().forEach(async (item) => {
-            const html = await item.content();
-            let childSocialHandles = null;
-            const childParseData = {};
+        
+        const frames = page.mainFrame().childFrames();
+        frames.forEach(async (item) => {
             try {
+                const html = await item.content();
+                let childSocialHandles = null;
+                const childParseData = {};
                 childSocialHandles = Apify.utils.social.parseHandlesFromHtml(html, childParseData);
 
-                ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((field) => {
+                socialMedia.forEach((field) => {
                     socialHandles[field] = childSocialHandles[field];
                 });
             } catch (e) {
-                log.info(e);
+                log.warning('One of the child frames failed to load', { message: e.toString(), url: page.url() });
             }
         });
 
 
-        ['emails', 'phones', 'phonesUncertain', 'linkedIns', 'twitters', 'instagrams', 'facebooks'].forEach((field) => {
+        socialMedia.forEach((field) => {
             socialHandles[field] = _.uniq(socialHandles[field]);
         });
 
-        return new Promise((resolve) => {
-            resolve(socialHandles);
-        });
+        return socialHandles;
     },
 
     mergeSocial(frames, main) {
         const output = main;
 
         Object.keys(output).forEach((key) => {
-            output[key] = _.uniq(main[key].concat(frames[key]));
+            // If frames[key] is undefined, we get [item, null] from concatenation.
+            const keyResult = frames[key] ? main[key].concat(frames[key]) : main[key];
+            output[key] = _.uniq(keyResult);
         });
 
         return output;
@@ -140,5 +156,18 @@ module.exports = {
 
         const requests = createRequests(requestOptions);
         await addRequestsToQueue({ requests, requestQueue, startUrl, maxRequestsPerStartUrl, requestsPerStartUrlCounter });
+    },
+
+    normalizeUrls: (urls) => {
+        const PROTOCOL_REGEX = /^((.)+:\/\/)/;
+        const BASE_URL_PATTERN = 'http://example.com';
+
+        return urls.map(({ url }) => {
+            const urlWithoutProtocol = url.replace(PROTOCOL_REGEX, '');
+            const relativeUrl = `//${urlWithoutProtocol}`;
+            const normalizedUrl = new URL(relativeUrl, BASE_URL_PATTERN)
+    
+            return normalizedUrl.toString();
+        });
     },
 };
