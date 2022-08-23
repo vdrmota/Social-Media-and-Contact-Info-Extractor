@@ -1,5 +1,5 @@
 const Apify = require('apify');
-const { normalizeUrls } = require('./helpers');
+const { normalizeUrls, fromStartUrls } = require('./helpers');
 const helpers = require('./helpers');
 
 const { log } = Apify.utils;
@@ -32,9 +32,14 @@ Apify.main(async () => {
         setInterval(persistRequestsPerStartUrlCounter, 60000);
         Apify.events.on('migrating', persistRequestsPerStartUrlCounter);
     }
+    // porcessing input URLs in case of requestsFromUrl (urls from txt file)
+    const processedStartUrls = [];
+    for await (const req of fromStartUrls(startUrls)) {
+        processedStartUrls.push(req);
+    }
 
     const requestQueue = await Apify.openRequestQueue();
-    const requestList = await Apify.openRequestList('start-urls', normalizeUrls(startUrls));
+    const requestList = await Apify.openRequestList('start-urls', normalizeUrls(processedStartUrls));
 
     requestList.requests.forEach((req) => {
         req.userData = {
