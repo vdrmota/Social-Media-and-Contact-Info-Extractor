@@ -71,6 +71,20 @@ async function addRequestsToQueue({ requests, requestQueue, maxRequestsPerStartU
     }
 }
 
+/**
+ * Transforms input.startUrls, parse requestsFromUrl items as well,
+ * into regular urls. Returns an async generator that should be iterated over.
+ */
+async function* fromStartUrls(startUrls, name = 'STARTURLS') {
+    const rl = await Apify.openRequestList(name, startUrls);
+    /** @type {Apify.Request | null} */
+    let rq;
+    // eslint-disable-next-line no-cond-assign
+    while ((rq = await rl.fetchNextRequest())) {
+        yield rq;
+    }
+}
+
 module.exports = {
     async getAttribute(element, attr) {
         try {
@@ -165,9 +179,9 @@ module.exports = {
         return urls.map(({ url }) => {
             const urlWithoutProtocol = url.replace(PROTOCOL_REGEX, '');
             const relativeUrl = `//${urlWithoutProtocol}`;
-            const normalizedUrl = new URL(relativeUrl, BASE_URL_PATTERN)
-    
+            const normalizedUrl = new URL(relativeUrl, BASE_URL_PATTERN);
             return normalizedUrl.toString();
         });
     },
+    fromStartUrls,
 };
